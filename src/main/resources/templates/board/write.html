@@ -1,0 +1,101 @@
+<html class="no-js" lang="zxx"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/layout}">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <title>Contact Us - Write</title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="shortcut icon" type="image/x-icon" href="../../static/assets/images/favicon.svg" />
+    <!-- Place favicon.ico in the root directory -->
+
+    <!-- Web Font -->
+    <link
+            href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+            rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
+
+
+
+</head>
+
+<body>
+<th:block layout:fragment="content">
+
+<!-- Start Breadcrumbs -->
+<div class="breadcrumbs">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 col-md-6 col-12">
+                <div class="breadcrumbs-content">
+                    <h1 class="page-title">Contact Us</h1>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-12">
+                <ul class="breadcrumb-nav">
+                    <li><a href="../main/index.html">Home</a></li>
+                    <li>Contact</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End Breadcrumbs -->
+
+<!-- Start Contact Area -->
+<section id="contact-us" class="contact-us section">
+    <div class="col-lg-7 col-12">
+        <div class="form-main">
+            <div class="form-title">
+                <h2>문의하기</h2>
+                <p></p>
+            </div>
+            <form class="form" method="post" action="/board/contact">
+                <div class="col-lg-6 col-12">
+                    <div class="form-group">
+                        <input name="title" type="text" placeholder="Title"
+                               required="required">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 col-12">
+                        <div class="form-group">
+                            <input name="writer" type="text" placeholder="Your Name" required="required">
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="form-group message">
+                            <textarea name="content" placeholder="Your Message"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6 col-12">
+                        <div class="form-group">
+                            <input name="password" type="text" placeholder="Your Password"
+                                   required="required">
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-group button">
+                            <button type="submit" class="btn ">등록</button>
+                            <button type="button" class="btn ">목록</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+<!--/ End Contact Area -->
+
+
+<!-- ========================= scroll-top ========================= -->
+<a href="#" class="scroll-top btn-hover">
+    <i class="lni lni-chevron-up"></i>
+</a>
+
+
+</html>

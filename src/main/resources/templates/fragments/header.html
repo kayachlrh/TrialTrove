@@ -3,6 +3,25 @@
 <html lang="ko"
       xmlns:th="http://www.thymeleaf.org"
       th:fragment="header">
+
+<!--[if lte IE 9]>
+<p class="browserupgrade">
+    You are using an <strong>outdated</strong> browser. Please
+    <a href="https://browsehappy.com/">upgrade your browser</a> to improve
+    your experience and security.
+</p>
+<![endif]-->
+
+<!-- Preloader -->
+<div class="preloader">
+    <div class="preloader-inner">
+        <div class="preloader-icon">
+            <span></span>
+            <span></span>
+        </div>
+    </div>
+</div>
+<!-- /End Preloader -->
 <!-- Start Header Area -->
 <header class="header navbar-area">
     <div class="container">
@@ -23,7 +42,7 @@
                         <div class="collapse navbar-collapse sub-menu-bar" id="navbarSupportedContent">
                             <ul id="nav" class="navbar-nav ms-auto">
                                 <li class="nav-item">
-                                    <a class=" active dd-menu collapsed" href="/"
+                                    <a class="dd-menu collapsed" th:class="${activePage == 'home' ? 'active' : ''}" href="/"
                                        aria-label="Toggle navigation">Home</a>
 
                                 </li>
@@ -31,7 +50,7 @@
                                     <a href="javascript:void(0)" aria-label="Toggle navigation">Categories</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class=" dd-menu collapsed" href="javascript:void(0)"
+                                    <a class=" dd-menu collapsed" th:class="${activePage == 'pages' ? 'active' : ''}" href="javascript:void(0)"
                                        data-bs-toggle="collapse" data-bs-target="#submenu-1-4"
                                        aria-controls="navbarSupportedContent" aria-expanded="false"
                                        aria-label="Toggle navigation">Pages</a>
@@ -39,8 +58,8 @@
                                         <li class="single-block">
                                             <ul>
                                                 <li class="mega-menu-title">Community</li>
-                                                <li class="nav-item"><a href="javascript:void(0)">Contact Us</a>
-                                                <li class="nav-item"><a href="javascript:void(0)">FAQ</a>
+                                                <li class="nav-item"><a href="/board/list">Contact Us</a>
+                                                <li class="nav-item"><a href="/board/faq">FAQ</a>
                                                 </li>
                                                 <li class="nav-item"><a href="javascript:void(0)">Notice</a></li>
                                             </ul>
@@ -63,12 +82,12 @@
                                     </ul>
                                 </li>
                                 <li class="nav-item">
-                                    <a class=" dd-menu collapsed" href="javascript:void(0)"
+                                    <a class=" dd-menu collapsed" th:class="${activePage == 'community' ? 'active' : ''}" href="javascript:void(0)"
                                        data-bs-toggle="collapse" data-bs-target="#submenu-1-5"
                                        aria-controls="navbarSupportedContent" aria-expanded="false"
                                        aria-label="Toggle navigation">Community</a>
                                     <ul class="sub-menu collapse" id="submenu-1-5">
-                                        <li class="nav-item"><a href="javascript:void(0)">Contact Us</a>
+                                        <li class="nav-item"><a href="../board/list">Contact Us</a>
                                         <li class="nav-item"><a href="javascript:void(0)">FAQ</a>
                                         </li>
                                         <li class="nav-item"><a href="javascript:void(0)">Notice</a></li>
@@ -80,14 +99,16 @@
                         <div class="login-button">
                             <ul>
                                 <li>
-                                    <a href="javascript:void(0)"><i class="lni lni-enter"></i> Sign In</a>
+                                    <a href="../member/login"><i class="lni lni-enter"></i>Login</a>
+                                    <!-- 로그인 시 로그아웃 -->
+
                                 </li>
                                 <li>
                                     <a href="javascript:void(0)"><i class="lni lni-user"></i> Sign Up</a>
                                 </li>
                             </ul>
                         </div>
-                        <!-- 관리지만 체험단모집 게시 가능 -->
+                        <!-- 관리자만 체험단모집 게시 가능 -->
                         <div class="button header-button">
                             <a href="javascript:void(0)" class="btn">Post an Trove</a>
                         </div>
