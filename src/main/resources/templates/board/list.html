@@ -32,7 +32,7 @@
   <section class="dashboard section">
     <div class="container">
       <div class="row">
-        <div class="col-lg-9 col-md-12 col-12">
+        <div class="col-lg-9 col-md-12 col-12 offset-lg-2">
         <div class="main-content">
           <div class="dashboard-block mt-0">
             <h3 class="block-title">문의하기</h3>
@@ -62,13 +62,13 @@
               <div class="single-item-list">
                 <div class="row align-items-center">
                   <div class="col-lg-2 col-md-2 col-12">
-                    <p>bno</p>
+                    <p th:text="${contact.bno}"></p>
                   </div>
                   <div class="col-lg-5 col-md-5 col-12">
-                      <h3 class="title"><a href="javascript:void(0)">문의합니다</a></h3>
+                      <h5 th:text="${contact.title}"><a href="javascript:void(0)"></a></h5>
                   </div>
                   <div class="col-lg-2 col-md-2 col-12">
-                    <p>writer</p>
+                    <p th:text="${contact.writer}">writer</p>
                   </div>
                   <div class="col-lg-2 col-md-2 col-12 align-right">
                     <ul class="action-btn">
@@ -82,7 +82,7 @@
               <!-- End Single List -->
               <div class="col-12 mt-5 text-end">
                 <div class="form-group button mb-0">
-                  <button type="submit" class="btn" onclick="window.location.href='write.html'">Write</button>
+                  <a href="/board/write" class="btn">Write</a>
                 </div>
               </div>
 

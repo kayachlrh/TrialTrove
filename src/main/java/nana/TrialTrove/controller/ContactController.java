@@ -28,7 +28,7 @@ public class ContactController {
     @GetMapping("/write")
     public String boardWriteForm(Model model) {
         model.addAttribute("contactEntity", new ContactEntity());
-        return "board/list"; // createContent.html과 연결될 템플릿 파일명
+        return "board/write"; // createContent.html과 연결될 템플릿 파일명
     }
 
     // 게시글 작성 처리
