@@ -59,7 +59,7 @@
               <hr style="margin-top: 10px;">
               <!-- End List Title -->
               <!-- Start Single List -->
-              <div class="single-item-list">
+              <div class="single-item-list" th:each="contact : ${contactList}">
                 <div class="row align-items-center">
                   <div class="col-lg-2 col-md-2 col-12">
                     <p th:text="${contact.bno}"></p>
@@ -68,17 +68,14 @@
                       <h5 th:text="${contact.title}"><a href="javascript:void(0)"></a></h5>
                   </div>
                   <div class="col-lg-2 col-md-2 col-12">
-                    <p th:text="${contact.writer}">writer</p>
+                    <p th:text="${contact.writer}"></p>
                   </div>
                   <div class="col-lg-2 col-md-2 col-12 align-right">
-                    <ul class="action-btn">
-                      <li><a href="javascript:void(0)"><i class="lni lni-eye"></i></a></li>
-                      <li><a href="javascript:void(0)"><i class="lni lni-trash"></i></a></li>
-                    </ul>
+                    <p th:text="${contact.regdate}"></p>
                   </div>
+                  <hr style="margin-top: 20px;">
                 </div>
               </div>
-              <hr style="margin-top: 20px;">
               <!-- End Single List -->
               <div class="col-12 mt-5 text-end">
                 <div class="form-group button mb-0">
@@ -103,7 +100,7 @@
             <!-- End Items Area -->
           </div>
         </div>
-        </div>
+      </div>
     </div>
 </section>
 <!-- End Dashboard Section -->

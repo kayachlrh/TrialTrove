@@ -34,30 +34,32 @@
                 <h2>문의하기</h2>
                 <p></p>
             </div>
-            <form class="form" method="post" action="/board/contact">
+            <form class="form" method="post" action="/board/contact" th:object="${contactEntity}">
                 <div class="col-lg-6 col-12">
                     <div class="form-group">
-                        <input name="title" type="text" placeholder="Title"
-                               required="required">
+                        <input name="title" type="text" id="title" placeholder="Title" required="required" th:field="*{title}">
+                        <span th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></span>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-lg-6 col-12">
                         <div class="form-group">
-                            <input name="writer" type="text" placeholder="Your Name" required="required">
+                            <input name="writer" type="text" id="writer" placeholder="Your Name" required="required" th:field="*{writer}">
+                            <span th:if="${#fields.hasErrors('writer')}" th:errors="*{writer}"></span>
                         </div>
                     </div>
 
                     <div class="col-12">
                         <div class="form-group message">
-                            <textarea name="content" placeholder="Your Message"></textarea>
+                            <textarea name="content" id="content" placeholder="Your Message" th:field="*{content}"></textarea>
+                            <span th:if="${#fields.hasErrors('content')}" th:errors="*{content}"></span>
                         </div>
                     </div>
 
                     <div class="col-lg-6 col-12">
                         <div class="form-group">
-                            <input name="password" type="text" placeholder="Your Password"
-                                   required="required">
+                            <input name="password" type="text" id="password" placeholder="Your Password" required="required" th:field="*{password}">
+                            <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
                         </div>
                     </div>
                     <div class="col-12">
