@@ -65,7 +65,7 @@
                     <p th:text="${contact.bno}"></p>
                   </div>
                   <div class="col-lg-5 col-md-5 col-12">
-                      <h5 th:text="${contact.title}"><a href="javascript:void(0)"></a></h5>
+                    <h5><a th:href="@{'/board/detail/' + ${contact.bno}}" th:text="${contact.title}"></a></h5>
                   </div>
                   <div class="col-lg-2 col-md-2 col-12">
                     <p th:text="${contact.writer}"></p>
@@ -88,8 +88,8 @@
               <!-- Pagination -->
               <div class="pagination left">
                 <ul class="pagination-list">
-                  <li><a href="javascript:void(0)">1</a></li>
-                  <li class="active"><a href="javascript:void(0)">2</a></li>
+                  <li class="active"><a href="javascript:void(0)">1</a></li>
+                  <li><a href="javascript:void(0)">2</a></li>
                   <li><a href="javascript:void(0)">3</a></li>
                   <li><a href="javascript:void(0)">4</a></li>
                   <li><a href="javascript:void(0)"><i class="lni lni-chevron-right"></i></a></li>

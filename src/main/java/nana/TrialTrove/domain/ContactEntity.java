@@ -1,18 +1,17 @@
 package nana.TrialTrove.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "board")
+@EntityListeners(AuditingEntityListener.class)
 public class ContactEntity {
 
     @Id
@@ -26,7 +25,10 @@ public class ContactEntity {
     @NotEmpty(message = "회원 이름은 필수 입력 항목입니다.")
     @Size(max = 5, message = "회원 이름은 최대 5자까지 입력 가능합니다.")
     private String writer;
-    private Timestamp regdate;
+
+    @CreatedDate
+    @Column(name = "regdate", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    private LocalDateTime regdate;
     @NotEmpty(message = "비밀번호는 필수 입력 항목입니다.")
     @Pattern(regexp = "^[0-9]{4}$", message = "비밀번호는 숫자 4자리만 입력 가능합니다.")
     private String password;
@@ -65,11 +67,11 @@ public class ContactEntity {
         this.writer = writer;
     }
 
-    public Timestamp getRegdate() {
+    public LocalDateTime getRegdate() {
         return regdate;
     }
 
-    public void setRegdate(Timestamp regdate) {
+    public void setRegdate(LocalDateTime regdate) {
         this.regdate = regdate;
     }
 

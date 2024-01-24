@@ -6,5 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ContactRepository extends JpaRepository<ContactEntity, Long> {
-
+    // 게시글 상세 내용 조회
+    ContactEntity findByBno(Long bno);
 }

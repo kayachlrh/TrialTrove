@@ -15,3 +15,4 @@ create table board(
     password varchar(100),
     constraint pk_board PRIMARY key(bno)
 );
+

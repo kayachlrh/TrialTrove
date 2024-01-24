@@ -1,10 +1,129 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+<html class="no-js" lang="zxx"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/layout}">
 
+<body>
+<th:block layout:fragment="content">
+
+    <!-- Start Breadcrumbs -->
+    <div class="breadcrumbs">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 col-md-6 col-12">
+                    <div class="breadcrumbs-content">
+                        <h1 class="page-title">Contact Us</h1>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-12">
+                    <ul class="breadcrumb-nav">
+                        <li><a href="../main/index.html">Home</a></li>
+                        <li>Contact</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Breadcrumbs -->
+
+    <!-- Start Contact Area -->
+    <section id="contact-us" class="contact-us section">
+        <div class="col-lg-7 col-12 offset-lg-2">
+            <div class="form-main">
+                <div class="form-title">
+                    <h2>문의하기</h2>
+                    <p></p>
+                </div>
+                <form class="form" th:object="${contactEntity}">
+                    <div class="col-lg-6 col-12">
+                        <div class="form-group">
+                            <input name="title" type="text" id="title" th:field="*{title}" readonly="readonly">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6 col-12">
+                            <div class="form-group">
+                                <input name="writer" type="text" id="writer"  th:field="*{writer}" readonly="readonly">
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-group message">
+                                <textarea name="content" id="content" th:field="*{content}" readonly="readonly"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-group button d-flex justify-content-between">
+                                <a href="/board/list" class="btn">목록</a>
+                                <a th:href="@{'/board/modify/' + ${contactEntity.bno}}" class="btn">수정</a>
+                            </div>
+                        </div>
+
+                        <!-- Comments -->
+                        <div class="post-comments">
+                            <h3 class="comment-title"><span th:text="${commentCount} + ' comments on this post'"></span></h3>
+                            <ul class="comments-list">
+                                <li>
+                                    <div class="comment-img">
+                                        <img src="assets/images/blog/comment1.jpg" class="rounded-circle" alt="img">
+                                    </div>
+                                    <div class="comment-desc">
+                                        <div class="desc-top">
+                                            <h6>관리자</h6>
+                                            <span class="date">19th May 2023</span>
+                                            <a href="javascript:void(0)" class="reply-link"><i class="lni lni-reply"></i>Reply</a>
+                                        </div>
+                                        <p>
+                                            Donec aliquam ex ut odio dictum, ut consequat leo interdum. Aenean nunc
+                                            ipsum, blandit eu enim sed, facilisis convallis orci. Etiam commodo
+                                            lectus
+                                            quis vulputate tincidunt. Mauris tristique velit eu magna maximus
+                                            condimentum.
+                                        </p>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="comment-form">
+                            <h3 class="comment-reply-title"><span>Leave a comment</span></h3>
+                            <form action="#" method="POST">
+                                <div class="row">
+                                    <div class="col-lg-6 col-12">
+                                        <div class="form-box form-group">
+                                            <input type="text" name="name" class="form-control form-control-custom"
+                                                   placeholder="관리자" />
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-box form-group">
+                                                <textarea name="#" class="form-control form-control-custom"
+                                                          placeholder="Your Comments"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="button">
+                                            <button type="submit" class="btn">Post Comment</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+
+    <!--/ End Contact Area -->
+
+
+    <!-- ========================= scroll-top ========================= -->
+    <a href="#" class="scroll-top btn-hover">
+        <i class="lni lni-chevron-up"></i>
+    </a>
+
+</th:block>
 </body>
 </html>
