@@ -5,6 +5,8 @@ import nana.TrialTrove.domain.ContactEntity;
 import nana.TrialTrove.repository.ContactRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -28,25 +30,30 @@ public class ContactService {
         return contactRepository.findByBno(bno);
     }
 
+    // 게시글 비밀번호 확인
+
+    public ContactEntity getContactByBno(Long bno, String password) {
+        ContactEntity contactEntity = contactRepository.findByBno(bno);
+
+        if (contactEntity != null && contactEntity.getPassword().equals(password)) {
+            return contactEntity;
+        }
+
+        return null;
+    }
+
+
     // 모든 게시글 조회
     public List<ContactEntity> getAllContacts() {
         return contactRepository.findAll();
     }
 
     // 게시글 수정
-    @Transactional
-    public void modifyContact(Long bno, ContactEntity modifiedContact) {
-        // 실제로 데이터를 수정하는 로직을 여기에 추가
-        ContactEntity existingContact = contactRepository.findById(bno).orElse(null);
-
-        if (existingContact != null) {
-            existingContact.setTitle(modifiedContact.getTitle());
-            existingContact.setWriter(modifiedContact.getWriter());
-            existingContact.setContent(modifiedContact.getContent());
-            existingContact.setPassword(modifiedContact.getPassword());
-
-            contactRepository.save(existingContact);
-        }
+    public ContactEntity updateContact(ContactEntity updatedContact) {
+        return contactRepository.save(updatedContact);
     }
+
+    //게시글 삭제
+
 
 }

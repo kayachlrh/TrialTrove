@@ -57,6 +57,7 @@
                             <div class="form-group button d-flex justify-content-between">
                                 <a href="/board/list" class="btn">목록</a>
                                 <a th:href="@{'/board/modify/' + ${contactEntity.bno}}" class="btn">수정</a>
+                                <a th:href="@{'/board/delete/' + ${contactEntity.bno}}" class="btn">삭제</a>
                             </div>
                         </div>
 

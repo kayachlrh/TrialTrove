@@ -65,13 +65,13 @@
                     <p th:text="${contact.bno}"></p>
                   </div>
                   <div class="col-lg-5 col-md-5 col-12">
-                    <h5><a th:href="@{'/board/detail/' + ${contact.bno}}" th:text="${contact.title}"></a></h5>
+                    <h5><a href="javascript:void(0);" th:onclick="'passwordPrompt(' + ${contact.bno} + ')'" th:text="${contact.title}"></a></h5>
                   </div>
                   <div class="col-lg-2 col-md-2 col-12">
                     <p th:text="${contact.writer}"></p>
                   </div>
                   <div class="col-lg-2 col-md-2 col-12 align-right">
-                    <p th:text="${contact.regdate}"></p>
+                    <p th:text="${#temporals.format(contact.regdate, 'yyyy-MM-dd')}"></p>
                   </div>
                   <hr style="margin-top: 20px;">
                 </div>
@@ -112,7 +112,15 @@
 </a>
 
 <script>
-  // 글이 추가될 때마다 호출되는 함수
+    function passwordPrompt(bno) {
+        // 비밀번호 입력창 표시
+        var password = prompt('비밀번호를 입력하세요:', '');
+
+        if (password !== null && password.trim() !== '') {
+            // 사용자가 비밀번호를 입력한 경우, 비밀번호를 확인하는 요청을 서버로 전송
+            window.location.href = '/board/checkPassword/' + bno + '?password=' + encodeURIComponent(password);
+        }
+    }
 
 </script>
 </th:block>

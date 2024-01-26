@@ -13,6 +13,9 @@ create table board(
     writer varchar(50),
     regdate timestamp default now(),
     password varchar(100),
+    modifiedDate timestamp,
     constraint pk_board PRIMARY key(bno)
 );
 
+ALTER TABLE board
+ADD COLUMN is_deleted BOOLEAN DEFAULT false;

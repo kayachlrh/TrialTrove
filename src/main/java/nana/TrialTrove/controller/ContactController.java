@@ -65,6 +65,22 @@ public class ContactController {
 
     }
 
+    // 게시글 비밀번호 확인
+    @PostMapping("/checkPassword/{bno}")
+    public String checkPassword(@PathVariable(name = "bno") Long bno, @RequestParam String password, Model model) {
+        ContactEntity contact = contactService.getContactByBno(bno, password);
+
+        if (contact != null) {
+            // 비밀번호 일치
+            model.addAttribute("contactEntity", contact);
+            model.addAttribute("activePage", "pages");
+            return "board/detail";
+        } else {
+            // 비밀번호 불일치
+            return "board/passwordMismatch";
+        }
+    }
+
     // 게시글 목록 조회
     @GetMapping("/list")
     public String showContactList(Model model) {
@@ -93,11 +109,12 @@ public class ContactController {
     }
 
     // 게시판 수정
-    @PostMapping("/modify")
-    public String modifyContact(@PathVariable(name = "bno") Long bno, @ModelAttribute ContactEntity modifiedContact) {
-
-        contactService.modifyContact(bno, modifiedContact);
-        // 수정이 완료된 후 상세 페이지로 리다이렉트
-        return "redirect:/board/detail" + bno;
+    @PostMapping("/modify/{bno}")
+    public String updateContact(@PathVariable(name = "bno") Long bno, @ModelAttribute ContactEntity updatedContact) {
+        contactService.updateContact(updatedContact);
+        return "redirect:/board/list"; // 수정 후 목록 페이지로 리다이렉트
     }
+
+    // 게시판 삭제
+
 }
