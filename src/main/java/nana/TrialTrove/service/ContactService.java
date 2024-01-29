@@ -14,6 +14,9 @@ public class ContactService {
 
     private final ContactRepository contactRepository;
 
+//    @Autowired
+//    private PasswordEncoder passwordEncoder;
+
     @Autowired
     public ContactService(ContactRepository contactRepository) {
         this.contactRepository = contactRepository;
@@ -21,7 +24,8 @@ public class ContactService {
 
     // 게시글 생성
     public void createContact(ContactEntity contactEntity) {
-        // 여기서 비밀번호 등의 유효성 검사 및 필요한 로직 수행 가능
+        // 비밀번호를 BCrypt로 인코딩하여 저장
+        //contactEntity.setPassword(passwordEncoder.encode(contactEntity.getPassword()));
         contactRepository.save(contactEntity);
     }
 
@@ -30,20 +34,27 @@ public class ContactService {
         return contactRepository.findByBno(bno);
     }
 
-    // 게시글 비밀번호 확인
 
-    public ContactEntity getContactByBno(Long bno, String password) {
+    // 게시글 비밀번호 확인
+    public ContactEntity getContactById(Long bno, String password) {
         ContactEntity contactEntity = contactRepository.findByBno(bno);
 
-        if (contactEntity != null && contactEntity.getPassword().equals(password)) {
-            return contactEntity;
+        if (contactEntity != null) {
+            String storedPassword = contactEntity.getPassword();
+            System.out.println("Stored Password: " + storedPassword);
+            System.out.println("Input Password: " + password);
+
+            if (storedPassword.equals(password)) {
+                return contactEntity;
+            }
         }
 
         return null;
     }
 
 
-    // 모든 게시글 조회
+
+        // 모든 게시글 조회
     public List<ContactEntity> getAllContacts() {
         return contactRepository.findAll();
     }

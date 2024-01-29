@@ -4559,6 +4559,10 @@ blockquote .shape {
     font-weight: 500;
   }
 
+  .modify-btn {
+    margin-left: auto;
+    order: -1;
+  }
   #scrollUp {
     bottom: 55px;
   }

@@ -1,5 +1,6 @@
 package nana.TrialTrove.controller;
 
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import nana.TrialTrove.domain.ContactEntity;
 import nana.TrialTrove.service.ContactService;
@@ -67,13 +68,12 @@ public class ContactController {
 
     // 게시글 비밀번호 확인
     @PostMapping("/checkPassword/{bno}")
-    public String checkPassword(@PathVariable(name = "bno") Long bno, @RequestParam String password, Model model) {
-        ContactEntity contact = contactService.getContactByBno(bno, password);
+    public String checkPassword(@PathVariable(name = "bno") Long bno, @RequestParam("password") String password, Model model) {
+        ContactEntity contact = contactService.getContactById(bno, password);
 
         if (contact != null) {
             // 비밀번호 일치
             model.addAttribute("contactEntity", contact);
-            model.addAttribute("activePage", "pages");
             return "board/detail";
         } else {
             // 비밀번호 불일치
@@ -98,6 +98,7 @@ public class ContactController {
     }
 
     // 게시판 수정 페이지
+    @Transactional
     @GetMapping("/modify/{bno}")
     public String showModifyForm(@PathVariable(name = "bno") Long bno, Model model) {
         ContactEntity contactEntity = contactService.getContactByBno(bno);
