@@ -47,7 +47,7 @@ public class ContactEntity {
     @LastModifiedDate
     private LocalDateTime modifiedDate;
 
-    private boolean is_deleted;
+    private boolean deleted;
 
 
 

@@ -4,15 +4,19 @@ import jakarta.transaction.Transactional;
 import nana.TrialTrove.domain.ContactEntity;
 import nana.TrialTrove.repository.ContactRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+
 @Service
 public class ContactService {
 
     private final ContactRepository contactRepository;
+
 
 //    @Autowired
 //    private PasswordEncoder passwordEncoder;
@@ -54,9 +58,9 @@ public class ContactService {
 
 
 
-        // 모든 게시글 조회
-    public List<ContactEntity> getAllContacts() {
-        return contactRepository.findAll();
+    // 게시글 조회
+    public Page<ContactEntity> getContactPage(Pageable pageable) {
+        return contactRepository.findByDeletedFalse(pageable);
     }
 
     // 게시글 수정
@@ -64,7 +68,16 @@ public class ContactService {
         return contactRepository.save(updatedContact);
     }
 
-    //게시글 삭제
 
+    //게시글 삭제
+    public void deleteContact(Long bno) {
+        ContactEntity contactEntity = contactRepository.findByBno(bno);
+
+        if (contactEntity != null) {
+            contactEntity.setDeleted(true);
+            contactRepository.save(contactEntity);
+        }
+
+    }
 
 }

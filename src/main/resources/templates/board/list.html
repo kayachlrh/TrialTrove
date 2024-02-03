@@ -97,11 +97,10 @@
               <!-- Pagination -->
               <div class="pagination left">
                 <ul class="pagination-list">
-                  <li class="active"><a href="javascript:void(0)">1</a></li>
-                  <li><a href="javascript:void(0)">2</a></li>
-                  <li><a href="javascript:void(0)">3</a></li>
-                  <li><a href="javascript:void(0)">4</a></li>
-                  <li><a href="javascript:void(0)"><i class="lni lni-chevron-right"></i></a></li>
+                  <li class="active" th:each="pageNumber : ${#numbers.sequence(0, totalPages - 1)}"
+                      th:class="${pageNumber == currentPage ? 'active' : ''}">
+                    <a th:href="@{/board/list(page=${pageNumber})}" th:text="${pageNumber + 1}"></a>
+                  </li>
                 </ul>
               </div>
               <!--/ End Pagination -->

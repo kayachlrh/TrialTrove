@@ -1,9 +1,10 @@
+<!DOCTYPE html>
 <html class="no-js" lang="zxx"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{fragments/layout}">
 
-
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <body>
 <th:block layout:fragment="content">
 
@@ -58,7 +59,7 @@
                             <div class="form-group button d-flex justify-content-between">
                                 <a href="/board/list" class="btn">목록</a>
                                 <a th:href="@{'/board/modify/' + ${contactEntity.bno}}" class="btn modify-btn">수정</a>
-                                <a th:href="@{'/board/delete/' + ${contactEntity.bno}}" class="btn">삭제</a>
+                                <button type="button" class="btn" onclick="confirmDelete()">삭제</button>
                             </div>
                         </div>
 
@@ -89,27 +90,34 @@
                         </div>
                         <div class="comment-form">
                             <h3 class="comment-reply-title"><span>Leave a comment</span></h3>
-                            <form action="#" method="POST">
-                                <div class="row">
-                                    <div class="col-lg-6 col-12">
-                                        <div class="form-box form-group">
-                                            <input type="text" name="name" class="form-control form-control-custom"
-                                                   placeholder="관리자" />
-                                        </div>
-                                    </div>
-                                    <div class="col-12">
-                                        <div class="form-box form-group">
+                        </div>
+                    </div>
+                </form>
+
+                <!-- 삭제 폼 -->
+                <form id="deleteForm" th:action="@{'/board/delete/' + ${contactEntity.bno}}" method="post">
+                    <input type="hidden" name="_method" value="delete">
+
+                </form>
+
+                <form action="#" method="POST">
+                    <div class="row">
+                        <div class="col-lg-6 col-12">
+                            <div class="form-box form-group">
+                                <input type="text" name="name" class="form-control form-control-custom"
+                                       placeholder="관리자">
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-box form-group">
                                                 <textarea name="#" class="form-control form-control-custom"
                                                           placeholder="Your Comments"></textarea>
-                                        </div>
-                                    </div>
-                                    <div class="col-12">
-                                        <div class="button">
-                                            <button type="submit" class="btn">Post Comment</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="button">
+                                <button type="submit" class="btn">Post Comment</button>
+                            </div>
                         </div>
                     </div>
                 </form>
@@ -125,6 +133,18 @@
     <a href="#" class="scroll-top btn-hover">
         <i class="lni lni-chevron-up"></i>
     </a>
+
+
+    <script>
+function confirmDelete() {
+        var form = document.getElementById('deleteForm');
+        if (form && confirm('삭제하시겠습니까?')) {
+            form.submit();
+        }
+    }
+</script>
+
+
 
 </th:block>
 </body>
