@@ -1,11 +1,22 @@
 
-CREATE TABLE member (
-    email VARCHAR(100) PRIMARY KEY,
-    name VARCHAR(50) NOT NULL,
-    pwd VARCHAR(100) NOT NULL,
-    repwd VARCHAR(100) NOT NULL
+
+--관리자
+CREATE TABLE admin (
+    adminId INT PRIMARY KEY AUTO_INCREMENT,
+    adminPw VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL
 );
 
+--회원
+CREATE TABLE member (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    userId VARCHAR(255) NOT NULL,
+    userPw VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    name VARCHAR(255) NOT NULL
+);
+
+--게시판
 create table board(
     bno int auto_increment,
     title varchar(150),
@@ -19,3 +30,9 @@ create table board(
 
 ALTER TABLE board
 ADD COLUMN is_deleted BOOLEAN DEFAULT false;
+
+ALTER TABLE board
+ADD COLUMN adminComment BOOLEAN DEFAULT FALSE;
+
+
+

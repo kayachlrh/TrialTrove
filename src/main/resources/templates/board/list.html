@@ -75,7 +75,7 @@
                     <p th:text="${contact.writer}"></p>
                   </div>
                   <div class="col-lg-2 col-md-2 col-12 align-right">
-                    <p th:text="${#temporals.format(contact.regdate, 'yyyy-MM-dd')}"></p>
+                    <p th:text="${#temporals.format(contact.modifiedDate, 'yyyy-MM-dd')}"></p>
                   </div>
                   <hr style="margin-top: 20px;">
                 </div>
@@ -100,6 +100,12 @@
                   <li class="active" th:each="pageNumber : ${#numbers.sequence(0, totalPages - 1)}"
                       th:class="${pageNumber == currentPage ? 'active' : ''}">
                     <a th:href="@{/board/list(page=${pageNumber})}" th:text="${pageNumber + 1}"></a>
+                  </li>
+                  <!-- 다음 버튼 -->
+                  <li th:if="${currentPage < totalPages - 1}">
+                    <a th:href="@{/board/list(page=${currentPage + 1})}" aria-label="Next">
+                      <span aria-hidden="true" class="lni lni-chevron-right"></span>
+                    </a>
                   </li>
                 </ul>
               </div>

@@ -65,7 +65,7 @@
 
                         <!-- Comments -->
                         <div class="post-comments">
-                            <h3 class="comment-title"><span th:text="${commentCount} + ' comments on this post'"></span></h3>
+                            <h3 class="comment-title"><span>comments</span></h3>
                             <ul class="comments-list">
                                 <li>
                                     <div class="comment-img">
@@ -90,43 +90,40 @@
                         </div>
                         <div class="comment-form">
                             <h3 class="comment-reply-title"><span>Leave a comment</span></h3>
-                        </div>
-                    </div>
-                </form>
-
-                <!-- 삭제 폼 -->
-                <form id="deleteForm" th:action="@{'/board/delete/' + ${contactEntity.bno}}" method="post">
-                    <input type="hidden" name="_method" value="delete">
-
-                </form>
-
-                <form action="#" method="POST">
-                    <div class="row">
-                        <div class="col-lg-6 col-12">
-                            <div class="form-box form-group">
-                                <input type="text" name="name" class="form-control form-control-custom"
-                                       placeholder="관리자">
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="form-box form-group">
+                            <form action="#" method="POST">
+                                <div class="row">
+                                    <div class="col-lg-6 col-12">
+                                        <div class="form-box form-group">
+                                            <input type="text" name="name" class="form-control form-control-custom"
+                                                   placeholder="관리자" />
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-box form-group">
                                                 <textarea name="#" class="form-control form-control-custom"
                                                           placeholder="Your Comments"></textarea>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="button">
-                                <button type="submit" class="btn">Post Comment</button>
-                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="button">
+                                            <button type="submit" class="btn">Post Comment</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <!-- 삭제 폼 -->
+                            <form id="deleteForm" th:action="@{'/board/delete/' + ${contactEntity.bno}}" method="post">
+                                <input type="hidden" name="_method" value="delete">
+
+                            </form>
                         </div>
                     </div>
-                </form>
+                </div>
             </div>
-        </div>
     </section>
+    <!-- End Comment -->
 
-
-    <!--/ End Contact Area -->
 
 
     <!-- ========================= scroll-top ========================= -->

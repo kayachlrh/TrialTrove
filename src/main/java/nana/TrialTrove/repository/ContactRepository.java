@@ -17,5 +17,4 @@ public interface ContactRepository extends JpaRepository<ContactEntity, Long> {
     Page<ContactEntity> findByDeletedFalse(Pageable pageable);
 
 
-
 }
