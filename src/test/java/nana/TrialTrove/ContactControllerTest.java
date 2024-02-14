@@ -1,5 +1,6 @@
 package nana.TrialTrove;
 
+import nana.TrialTrove.domain.ContactDTO;
 import nana.TrialTrove.domain.ContactEntity;
 import nana.TrialTrove.service.ContactService;
 import org.junit.jupiter.api.Test;
@@ -10,13 +11,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.transaction.annotation.Transactional;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@Transactional
 public class ContactControllerTest {
 
     @Autowired
@@ -73,7 +71,7 @@ public class ContactControllerTest {
     @Test
     public void testUpdateContact() throws Exception {
         // Assuming there is a contact entity with ID 1
-        ContactEntity updatedContact = new ContactEntity();
+        ContactDTO updatedContact = new ContactDTO();
         updatedContact.setTitle("Updated Title");
         updatedContact.setContent("updated.Content");
         updatedContact.setWriter("Updated Writer");

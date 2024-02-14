@@ -4,6 +4,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{fragments/layout}">
 
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
 <body>
 <th:block layout:fragment="content">
@@ -35,7 +36,7 @@
                 <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-12">
                     <div class="form-head">
                         <h4 class="title">Registration</h4>
-                        <form action="#!" method="post">
+                        <form action="/member/join" method="post" th:object="${member}">
                             <div class="socila-login">
                                 <ul>
                                     <li><a href="javascript:void(0)" class="facebook"><i class="lni lni-facebook-original"></i>Import
@@ -47,23 +48,29 @@
                             </div>
                             <div class="form-group">
                                 <label>ID</label>
-                                <input name="userId" type="text">
-                            </div>
-                            <div class="form-group">
-                                <label>Name</label>
-                                <input name="name" type="text">
+                                <input type="text" th:field="*{userId}">
+                                <span th:if="${#fields.hasErrors('userId')}" th:errors="*{userId}"></span>
+                                <button type="button" class="btn" onclick="checkDuplicate()">중복 확인</button>
                             </div>
                             <div class="form-group">
                                 <label>Password</label>
-                                <input name="userPw" type="password">
+                                <input id="password" type="password" th:field="*{userPw}">
+                                <span th:if="${#fields.hasErrors('userPw')}" th:errors="*{userPw}"></span>
                             </div>
                             <div class="form-group">
                                 <label>Confirm Password</label>
-                                <input name="userPw" type="password">
+                                <input id="confirmPassword" name="confirmPassword" type="password" onkeyup="checkPassword()">
+                                <div id="checkPwError"></div>
                             </div>
                             <div class="form-group">
                                 <label>Email</label>
-                                <input name="email" type="email">
+                                <input type="email" th:field="*{email}">
+                                <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+                            </div>
+                            <div class="form-group">
+                                <label>Name</label>
+                                <input type="text" th:field="*{name}">
+                                <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
                             </div>
                             <div class="check-and-pass">
                                 <div class="row align-items-center">
@@ -96,7 +103,38 @@
     <a href="#" class="scroll-top btn-hover">
         <i class="lni lni-chevron-up"></i>
     </a>
+    <script>
 
+    //아이디 중복체크
+    function checkDuplicate() {
+    var userId = document.getElementById("userId").value;
+
+    $.ajax({
+        type: "GET",
+        url: "/checkDuplicate?userId=" + userId,
+        success: function(response) {
+            if (response === true) {
+                alert("사용할 수 있는 아이디입니다.");
+            } else {
+                alert("이미 사용 중인 아이디입니다.");
+            }
+        }
+   });
+}
+
+    //비밀번호 유효검사
+    function checkPassword() {
+        var password = document.getElementById("password");
+        var confirmPassword = document.getElementById("confirmPassword");
+        var errorDiv = document.getElementById("checkPwError");
+
+        if (password.value !== confirmPassword.value) {
+            errorDiv.innerHTML = "Passwords do not match";
+        } else {
+            errorDiv.innerHTML = "";
+        }
+    }
+</script>
 
 </th:block>
 </body>
