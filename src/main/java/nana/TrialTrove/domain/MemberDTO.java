@@ -13,6 +13,8 @@ import lombok.ToString;
 @ToString
 public class MemberDTO {
 
+    private Long id;
+
     @NotEmpty(message = "아이디는 필수 입력 항목입니다.")
     private String userId;
 

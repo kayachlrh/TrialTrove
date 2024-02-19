@@ -34,7 +34,7 @@
                 <h2>문의하기</h2>
                 <p></p>
             </div>
-            <form class="form" method="post" action="/board/contact" th:object="${contactEntity}">
+            <form class="form" method="post" action="/board/contact" th:object="${contactDTO}">
                 <div class="col-lg-6 col-12">
                     <div class="form-group">
                         <input name="title" type="text" id="title" placeholder="Title" required="required" th:field="*{title}">

@@ -4,7 +4,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{fragments/layout}">
 
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
 
 <body>
 <th:block layout:fragment="content">
@@ -36,7 +36,7 @@
                 <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-12">
                     <div class="form-head">
                         <h4 class="title">Registration</h4>
-                        <form action="/member/join" method="post" th:object="${member}">
+                        <form id="joinForm" action="/member/join" method="post" th:object="${member}">
                             <div class="socila-login">
                                 <ul>
                                     <li><a href="javascript:void(0)" class="facebook"><i class="lni lni-facebook-original"></i>Import
@@ -48,28 +48,28 @@
                             </div>
                             <div class="form-group">
                                 <label>ID</label>
-                                <input type="text" th:field="*{userId}">
+                                <input type="text" required="required" th:field="*{userId}">
                                 <span th:if="${#fields.hasErrors('userId')}" th:errors="*{userId}"></span>
-                                <button type="button" class="btn" onclick="checkDuplicate()">중복 확인</button>
+                                <button type="button" class="btn" onclick="checkDuplicate()" style="float: right;">중복 확인</button>
                             </div>
                             <div class="form-group">
                                 <label>Password</label>
-                                <input id="password" type="password" th:field="*{userPw}">
+                                <input id="password" type="password" required="required" th:field="*{userPw}">
                                 <span th:if="${#fields.hasErrors('userPw')}" th:errors="*{userPw}"></span>
                             </div>
                             <div class="form-group">
                                 <label>Confirm Password</label>
-                                <input id="confirmPassword" name="confirmPassword" type="password" onkeyup="checkPassword()">
+                                <input id="confirmPassword" name="confirmPassword" type="password" required="required" onkeyup="checkPassword()">
                                 <div id="checkPwError"></div>
                             </div>
                             <div class="form-group">
                                 <label>Email</label>
-                                <input type="email" th:field="*{email}">
+                                <input type="email" th:field="*{email}" required="required">
                                 <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
                             </div>
                             <div class="form-group">
                                 <label>Name</label>
-                                <input type="text" th:field="*{name}">
+                                <input type="text" th:field="*{name}" required="required">
                                 <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
                             </div>
                             <div class="check-and-pass">
@@ -85,9 +85,10 @@
                                 </div>
                             </div>
                             <div class="button">
-                                <button type="submit" class="btn">Registration</button>
+                                <input type="hidden" id="isDuplicateChecked" name="isDuplicateChecked" value="false">
+                                <button type="submit" class="btn" onclick="submitForm()">Registration</button>
                             </div>
-                            <p class="outer-link">Already have an account? <a href="login.html"> Login Now</a>
+                            <p class="outer-link">Already have an account? <a href="/member/login"> Login Now</a>
                             </p>
                         </form>
                     </div>
@@ -103,23 +104,38 @@
     <a href="#" class="scroll-top btn-hover">
         <i class="lni lni-chevron-up"></i>
     </a>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script>
 
-    //아이디 중복체크
+//아이디 중복체크
     function checkDuplicate() {
-    var userId = document.getElementById("userId").value;
+        var userId = document.getElementById("userId").value;
 
-    $.ajax({
-        type: "GET",
-        url: "/checkDuplicate?userId=" + userId,
-        success: function(response) {
-            if (response === true) {
-                alert("사용할 수 있는 아이디입니다.");
-            } else {
-                alert("이미 사용 중인 아이디입니다.");
+        $.ajax({
+            type: "GET",
+            url: "/member/checkDuplicate?userId=" + userId,
+            success: function(response) {
+                if (response === true) {
+                    alert("이미 사용 중인 아이디입니다.");
+                    document.getElementById("isDuplicateChecked").value = "true";
+                } else {
+                    alert("사용할 수 있는 아이디입니다.");
+                    document.getElementById("isDuplicateChecked").value = "false";
+                }
             }
-        }
-   });
+        });
+    }
+
+// 회원가입 폼 제출
+function submitForm() {
+    var isDuplicateChecked = document.getElementById("isDuplicateChecked").value;
+    if (isDuplicateChecked === "false") {
+        alert("중복 확인을 해주세요.");
+        return false;
+    }
+
+    // 중복 확인 완료시 폼을 서버로 제출
+    document.getElementById("joinForm").submit();
 }
 
     //비밀번호 유효검사
@@ -129,7 +145,8 @@
         var errorDiv = document.getElementById("checkPwError");
 
         if (password.value !== confirmPassword.value) {
-            errorDiv.innerHTML = "Passwords do not match";
+            errorDiv.innerHTML = "비밀번호가 일치하지 않습니다";
+            errorDiv.style.color = "red";
         } else {
             errorDiv.innerHTML = "";
         }

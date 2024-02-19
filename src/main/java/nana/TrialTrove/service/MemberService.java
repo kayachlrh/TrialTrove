@@ -5,7 +5,7 @@ import nana.TrialTrove.domain.MemberDTO;
 import nana.TrialTrove.domain.MemberEntity;
 import nana.TrialTrove.repository.MemberRepository;
 import org.modelmapper.ModelMapper;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,17 +17,17 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
+    //private final BCryptPasswordEncoder passwordEncoder;
     private final ModelMapper modelMapper;
 
     @Transactional
     public MemberDTO joinMember(MemberDTO memberDTO) {
         // 패스워드 암호화
-        String encryptedPassword = passwordEncoder.encode(memberDTO.getUserPw());
+       // String encryptedPassword = passwordEncoder.encode(memberDTO.getUserPw());
 
         // DTO를 엔티티로 변환
         MemberEntity memberEntity = modelMapper.map(memberDTO, MemberEntity.class);
-        memberEntity.setUserPw(encryptedPassword);
+        //memberEntity.setUserPw(encryptedPassword);
 
         // 회원 저장
         memberRepository.save(memberEntity);
@@ -37,8 +37,7 @@ public class MemberService {
 
     // 아이디 중복체크
     public boolean checkId(String userId) {
-        Optional<MemberEntity> existingMember = memberRepository.findByUserId(userId);
-        return existingMember.isPresent();
+       return memberRepository.findByUserId(userId).isPresent();
     }
 
     public MemberEntity findMemberByUserId(String userId) {
@@ -50,7 +49,7 @@ public class MemberService {
         if (memberOptional.isPresent()) {
             MemberEntity member = memberOptional.get();
             // 비밀번호 검증
-            return passwordEncoder.matches(userPw, member.getUserPw());
+            //return passwordEncoder.matches(userPw, member.getUserPw());
         }
         return false;
     }
