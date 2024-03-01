@@ -3,10 +3,23 @@
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{fragments/layout}">
-
+<!-- 간편 로그인 -->
+<script type="text/javascript" src="https://static.nid.naver.com/js/naverLogin_implicit-1.0.3.js" charset="utf-8"></script>
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
 <body>
 <th:block layout:fragment="content">
+
+  <!-- 네이버 로그인 버튼 노출 영역 -->
+  <script type="text/javascript">
+	var naver_id_login = new naver_id_login("WHM3kCHtaWn1Qz1VYbI8", "Sdxf9olu0T");
+	var state = naver_id_login.getUniqState();
+	naver_id_login.setButton("white", 1,40); //네이버 로그인 버튼 설정
+	naver_id_login.setDomain(/oauth/naver);
+	naver_id_login.setState(state);
+	naver_id_login.setPopup();
+	naver_id_login.init_naver_id_login();
+</script>
 
   <!-- Start Breadcrumbs -->
   <div class="breadcrumbs">
@@ -35,7 +48,7 @@
         <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-12">
           <div class="form-head">
             <h4 class="title">Login</h4>
-            <form action="/member/login" method="post">
+            <form action="/login" method="post">
               <div class="form-group">
                 <label>Id</label>
                 <input name="userId" type="text">
@@ -64,11 +77,10 @@
               <div class="alt-option">
                 <span>Or</span>
               </div>
-              <div class="socila-login">
-                <ul>
-                  <li><a href="javascript:void(0)" class="facebook"><i class="lni lni-facebook-original"></i>Login With
-                    Facebook</a></li>
-                </ul>
+              <div class="socila-login" id="naver_id_login" style="text-align: center;">
+                <a href = "/oauth2/authorization/naver" onclick="openNaverLogin()">
+                  <img src="/static/assets/images/logo/naver.png">
+                </a>
               </div>
               <p class="outer-link">Don't have an account? <a href="join.html">Register here</a>
               </p>
@@ -86,7 +98,6 @@
   <a href="#" class="scroll-top btn-hover">
     <i class="lni lni-chevron-up"></i>
   </a>
-
 
 </th:block>
 </body>

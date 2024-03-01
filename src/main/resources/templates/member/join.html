@@ -51,6 +51,7 @@
                                 <input type="text" required="required" th:field="*{userId}">
                                 <span th:if="${#fields.hasErrors('userId')}" th:errors="*{userId}"></span>
                                 <button type="button" class="btn" onclick="checkDuplicate()" style="float: right;">중복 확인</button>
+                                <input type="hidden" id="isDuplicateChecked" name="isDuplicateChecked" value="false">
                             </div>
                             <div class="form-group">
                                 <label>Password</label>
@@ -72,20 +73,7 @@
                                 <input type="text" th:field="*{name}" required="required">
                                 <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
                             </div>
-                            <div class="check-and-pass">
-                                <div class="row align-items-center">
-                                    <div class="col-12">
-                                        <div class="form-check">
-                                            <input type="checkbox" class="form-check-input width-auto"
-                                                   id="exampleCheck1">
-                                            <label class="form-check-label">Agree to our <a href="javascript:void(0)">Terms and
-                                                Conditions</a></label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                             <div class="button">
-                                <input type="hidden" id="isDuplicateChecked" name="isDuplicateChecked" value="false">
                                 <button type="submit" class="btn" onclick="submitForm()">Registration</button>
                             </div>
                             <p class="outer-link">Already have an account? <a href="/member/login"> Login Now</a>
@@ -117,11 +105,14 @@
             success: function(response) {
                 if (response === true) {
                     alert("이미 사용 중인 아이디입니다.");
-                    document.getElementById("isDuplicateChecked").value = "true";
+                    document.getElementById("isDuplicateChecked").value = "false";
                 } else {
                     alert("사용할 수 있는 아이디입니다.");
-                    document.getElementById("isDuplicateChecked").value = "false";
+                    document.getElementById("isDuplicateChecked").value = "true";
                 }
+            },
+            error: function() {
+                alert("중복 확인에 실패했습니다. 다시 시도해주세요.");
             }
         });
     }

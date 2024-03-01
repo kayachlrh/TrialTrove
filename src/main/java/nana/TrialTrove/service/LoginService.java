@@ -4,6 +4,7 @@ import nana.TrialTrove.domain.MemberEntity;
 import nana.TrialTrove.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -30,4 +31,5 @@ public class LoginService {
         // 사용자 정보가 존재하고 비밀번호가 일치하는지 확인
         return userOptional.isPresent() && userOptional.get().getUserPw().equals(userPw);
     }
+
 }

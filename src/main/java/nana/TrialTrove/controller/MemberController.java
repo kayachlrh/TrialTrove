@@ -24,12 +24,11 @@ import java.util.List;
 public class MemberController {
 
     private final MemberService memberService;
-    private final LoginService loginService;
 
     @Autowired
-    public MemberController(MemberService memberService, LoginService loginService) {
+    public MemberController(MemberService memberService) {
         this.memberService = memberService;
-        this.loginService = loginService;
+
     }
 
 
@@ -75,26 +74,4 @@ public class MemberController {
     }
 
 
-    @GetMapping("/login")
-    public String loginView() {
-        log.info("로그인 페이지 진입");
-        return "member/login";
-    }
-
-    @PostMapping("/login")
-    public String login(@RequestParam("userId") String userId, @RequestParam("userPw") String userPw, Model model) {
-        if (userId == null || userId.isEmpty() || userPw == null || userPw.isEmpty()) {
-            model.addAttribute("error", "아이디와 비밀번호를 모두 입력해주세요.");
-            return "member/login";
-        }
-
-        if (loginService.login(userId, userPw)) {
-            // 로그인 성공
-            return "redirect:/"; // 로그인 후 이동할 페이지 경로
-        } else {
-            // 로그인 실패
-            model.addAttribute("error", "아이디 또는 비밀번호가 올바르지 않습니다.");
-            return "member/login";
-        }
-    }
 }

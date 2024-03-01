@@ -8,9 +8,9 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-//import org.springframework.security.core.GrantedAuthority;
-//import org.springframework.security.core.authority.SimpleGrantedAuthority;
-//import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
@@ -19,8 +19,7 @@ import java.util.List;
 @Setter
 @ToString
 @Entity
-@Table(name = "member")
-public class MemberEntity {
+public class MemberEntity implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,41 +44,42 @@ public class MemberEntity {
     private String name;
 
     //권한 반환
-//    @Override
-//    public Collection<? extends GrantedAuthority> getAuthorities() {
-//        return List.of(new SimpleGrantedAuthority("user"));
-//    }
-//
-//
-//    @Override
-//    public String getUsername() {
-//        return userId;
-//    }
-//    @Override
-//    public String getPassword() {
-//        return userPw;
-//    }
-//
-//
-//    @Override
-//    public boolean isAccountNonExpired() {
-//        return true; // 계정 만료 여부, 여기서는 항상 true
-//    }
-//
-//    @Override
-//    public boolean isAccountNonLocked() {
-//        return true; // 계정 잠김 여부, 여기서는 항상 true
-//    }
-//
-//    @Override
-//    public boolean isCredentialsNonExpired() {
-//        return true; // 자격 증명 만료 여부, 여기서는 항상 true
-//    }
-//
-//    @Override
-//    public boolean isEnabled() {
-//        return true; // 계정 활성 여부, 여기서는 항상 true
-//    }
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority("user"));
+    }
+
+
+    @Override
+    public String getUsername() {
+        return userId;
+    }
+    @Override
+    public String getPassword() {
+        return userPw;
+    }
+
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true; // 계정 만료 여부, 여기서는 항상 true
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true; // 계정 잠김 여부, 여기서는 항상 true
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true; // 자격 증명 만료 여부, 여기서는 항상 true
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true; // 계정 활성 여부, 여기서는 항상 true
+    }
 }
+
 
 

@@ -1,11 +1,5 @@
 
 
---관리자
-CREATE TABLE admin (
-    adminId INT PRIMARY KEY AUTO_INCREMENT,
-    adminPw VARCHAR(255) NOT NULL,
-    email VARCHAR(255) NOT NULL
-);
 
 --회원
 CREATE TABLE member (
@@ -14,6 +8,22 @@ CREATE TABLE member (
     userPw VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
     name VARCHAR(255) NOT NULL
+);
+
+--네이버 로그인 정보
+CREATE TABLE member_naver (
+    naverId VARCHAR(255) PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL
+);
+
+--네이버 매핑
+CREATE TABLE member_naver_mapping (
+    naver_id VARCHAR(255) NOT NULL,
+    member_id INT NOT NULL,
+    PRIMARY KEY (naver_id, member_id),
+    FOREIGN KEY (naver_id) REFERENCES member_naver(naver_id),
+    FOREIGN KEY (member_id) REFERENCES member(id)
 );
 
 --게시판
@@ -33,6 +43,9 @@ ADD COLUMN is_deleted BOOLEAN DEFAULT false;
 
 ALTER TABLE board
 ADD COLUMN adminComment BOOLEAN DEFAULT FALSE;
+
+-- 관리자 추가
+ALTER TABLE member ADD COLUMN is_admin BOOLEAN DEFAULT FALSE;
 
 
 
