@@ -9,11 +9,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class SocialLoginController {
 
     // 네이버 로그인
-    @GetMapping("/naver-login")
+    @GetMapping("/naver")
     public String naverLogin() {
-        return "redirect:/oauth2/authorization/naver";
+        return "redirect:/";
     }
 
-
-    // 네이버 로그인 콜백 처리
 }

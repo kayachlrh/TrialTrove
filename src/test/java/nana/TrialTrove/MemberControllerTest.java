@@ -53,7 +53,7 @@ public class MemberControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"userId\":\"testUser\",\"userPw\":\"testPassword\",\"email\":\"test@example.com\",\"name\":\"Test User\"}"))
                 .andExpect(MockMvcResultMatchers.status().is3xxRedirection())
-                .andExpect(MockMvcResultMatchers.redirectedUrl("/member/login"));
+                .andExpect(MockMvcResultMatchers.redirectedUrl("/member/join")); // 여기를 /member/join으로 수정
 
         // memberService.joinMember 메서드가 한 번 호출되었는지 검증
         Mockito.verify(memberService, Mockito.times(1)).joinMember(any(MemberDTO.class));

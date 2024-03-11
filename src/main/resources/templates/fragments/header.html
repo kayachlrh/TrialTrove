@@ -2,6 +2,7 @@
 
 <html lang="ko"
       xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       th:fragment="header">
 
 <!--[if lte IE 9]>
@@ -30,7 +31,7 @@
                 <div class="nav-inner">
                     <nav class="navbar navbar-expand-lg">
                         <a class="navbar-brand" href="/">
-                            <img src="/static/assets/images/logo/logo.svg" alt="Logo">
+                            <img src="/static/assets/images/logo/logo.png" alt="Logo">
                         </a>
                         <button class="navbar-toggler mobile-menu-btn" type="button" data-bs-toggle="collapse"
                                 data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
@@ -96,14 +97,20 @@
                         </div> <!-- navbar collapse -->
                         <div class="login-button">
                             <ul>
+                                <th:block sec:authorize="isAnonymous()">
                                 <li>
-                                    <a href="/member/login"><i class="lni lni-enter"></i>Login</a>
-                                    <!-- 로그인 시 로그아웃 스프링 시큐리티로 구현-->
-
+                                        <!-- 인증 받지 않음 -->
+                                        <a th:href="@{/member/login}"><i class="lni lni-enter"></i>Login</a>
+                                        <a th:href="@{/member/join}"><i class="lni lni-user"></i>Sign up</a>
                                 </li>
+                                </th:block>
+                                <th:block sec:authorize="isAuthenticated()">
                                 <li>
-                                    <a href="/member/join"><i class="lni lni-user"></i> Sign Up</a>
+                                        <!-- 인증 받음 -->
+                                        <a th:href="@{/member/logout}"><i class="lni lni-enter"></i>Logout</a>
+                                        <a th:href="@{/member/myInfo}"><i class="lni lni-enter"></i>My Info</a>
                                 </li>
+                                </th:block>
                             </ul>
                         </div>
                         <!-- 관리자만 체험단모집 게시 가능 -->

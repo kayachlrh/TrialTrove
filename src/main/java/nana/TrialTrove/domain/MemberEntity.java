@@ -18,6 +18,7 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
+@Table(name = "member")
 @Entity
 public class MemberEntity implements UserDetails {
 
@@ -25,22 +26,16 @@ public class MemberEntity implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotEmpty(message = "아이디는 필수 입력 항목입니다.")
+    @Column(nullable = false, unique = true)
     private String userId;
 
-
-    @NotEmpty(message = "비밀번호는 필수 입력 항목입니다.")
-    @Pattern(
-            regexp = "^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[@#$%^&+=!]).{8,20}$",
-            message = "비밀번호는 숫자, 영문자, 특수문자를 포함해야합니다." )
+    @Column(nullable = false)
     private String userPw;
 
-
-    @Email(message = "올바른 이메일 주소가 아닙니다.")
+    @Column(nullable = false, unique = true)
     private String email;
 
-    @NotEmpty(message = "이름은 필수 입력 항목입니다.")
-    @Size(max = 20, message = "10자 이하만 가능합니다.")
+    @Column(nullable = false)
     private String name;
 
     //권한 반환

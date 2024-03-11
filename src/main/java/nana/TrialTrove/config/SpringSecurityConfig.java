@@ -5,6 +5,7 @@ import nana.TrialTrove.service.MemberDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -19,6 +20,7 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 import static org.springframework.boot.autoconfigure.security.servlet.PathRequest.toH2Console;
 import static org.springframework.security.config.Customizer.withDefaults;
@@ -28,7 +30,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @Configuration
 public class SpringSecurityConfig {
 
-    private final MemberDetailsService memberService;
+    private final MemberDetailsService memberDetailsService;
 
     // 스프링 시큐리티 기능 비활성화
     @Bean
@@ -41,11 +43,11 @@ public class SpringSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http, OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService) throws Exception {
         http
                 .authorizeHttpRequests((authorizeRequests) -> {
-                    authorizeRequests
-                            .requestMatchers("/oauth/naver").permitAll()
-                            .requestMatchers("/member/myInfo").authenticated();
+//                    authorizeRequests
+//                            .requestMatchers("/oauth/naver").permitAll()
+//                            .requestMatchers("/member/myInfo","/board/write").authenticated();
 
-                    authorizeRequests.requestMatchers("/member/myInfo")
+                    authorizeRequests.requestMatchers("/member/myInfo","/board/write")
                             .hasAnyRole("ADMIN", "USER");
 
                     authorizeRequests.requestMatchers("/admin/**")
@@ -56,21 +58,35 @@ public class SpringSecurityConfig {
                 .formLogin((formLogin) -> {
                     /* 권한이 필요한 요청은 해당 url로 리다이렉트 */
                     formLogin.loginPage("/member/login").permitAll();
+                    formLogin.defaultSuccessUrl("/");
                 })
                 .httpBasic(withDefaults());
         http
-                .csrf(AbstractHttpConfigurer::disable)
+                .csrf(csrf -> csrf
+                //.csrfTokenRequestHandler()
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                .ignoringRequestMatchers("/", "/member/**", "/board/**")
+        );
+        http
                 .sessionManagement((sessionManagement) ->
-                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                        sessionManagement.sessionCreationPolicy(SessionCreationPolicy.ALWAYS) //스프링시큐리티가 항상 세션을 생성
                 );
 
         http
-            .oauth2Login(oauth2 -> {
-            oauth2.defaultSuccessUrl("/"); // 로그인 성공 후 이동할 페이지 URL
-            oauth2.userInfoEndpoint(userInfo -> {
-                userInfo.userService(oAuth2UserService);
+                .oauth2Login(oauth2 -> {
+                oauth2.defaultSuccessUrl("/"); // 로그인 성공 후 이동할 페이지 URL
+                oauth2.userInfoEndpoint(userInfo -> {
+                    userInfo.userService(oAuth2UserService);
+                });
             });
-        });
+
+        http
+                .logout(logout -> logout
+                        .logoutUrl("/member/logout")
+                        .logoutSuccessUrl("/")
+                        .invalidateHttpSession(true)
+                        .deleteCookies("remember-me")
+                );
 
         return http.build();
     }
@@ -95,11 +111,13 @@ public class SpringSecurityConfig {
     public DaoAuthenticationProvider daoAuthenticationProvider() throws Exception {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
 
-        daoAuthenticationProvider.setUserDetailsService(memberService);
+        daoAuthenticationProvider.setUserDetailsService(memberDetailsService);
         daoAuthenticationProvider.setPasswordEncoder(bCryptPasswordEncoder());
 
         return daoAuthenticationProvider;
     }
+
+
 
     // 패스워드 인코더로 사용할 빈 등록
     @Bean

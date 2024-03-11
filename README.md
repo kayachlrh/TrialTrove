@@ -4,6 +4,8 @@
 ### 💍기술
 * SpringBoot3
 * Spring Data JPA
+* Spring Security6
+* OAuth2.0
 * JAVA 17
 * Thymeleaf
 * JavaScript
@@ -13,4 +15,4 @@
 * JUnit(test)
 
 
-게시판 구현완료
+게시판, 회원가입, 로그인 구현완료
