@@ -3,8 +3,10 @@ package nana.TrialTrove.service;
 import lombok.RequiredArgsConstructor;
 import nana.TrialTrove.domain.OAuthAttributes;
 import nana.TrialTrove.domain.UserProfile;
+import nana.TrialTrove.domain.UserRole;
 import nana.TrialTrove.repository.UserProfileRepository;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -70,11 +72,11 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         User user = userProfile.toUser();
 
         // User 객체의 역할 정보를 가져옴
-        Collection<? extends GrantedAuthority> authorities = user.getAuthorities();
+        Collection<? extends GrantedAuthority> authorities = Collections.singleton(new SimpleGrantedAuthority(UserRole.USER.getValue()));
 
         // DefaultOAuth2User 객체 생성하여 반환
         return new DefaultOAuth2User(
-                new ArrayList<>(authorities),
+                authorities,
                 attributes,
                 userNameAttributeName
         );

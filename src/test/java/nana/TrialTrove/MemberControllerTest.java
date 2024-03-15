@@ -1,8 +1,6 @@
 package nana.TrialTrove;
 
 import nana.TrialTrove.domain.MemberDTO;
-import nana.TrialTrove.domain.MemberEntity;
-import nana.TrialTrove.service.LoginService;
 import nana.TrialTrove.service.MemberService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -16,8 +14,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -29,8 +25,6 @@ public class MemberControllerTest {
     @MockBean
     private MemberService memberService;
 
-    @MockBean
-    private LoginService loginService;
 
     @Test
     public void testJoinView() throws Exception {

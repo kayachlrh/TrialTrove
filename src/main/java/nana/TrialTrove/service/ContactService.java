@@ -19,11 +19,12 @@ import java.util.Optional;
 @Service
 public class ContactService {
 
+
     private final ContactRepository contactRepository;
     private final ModelMapper modelMapper;
 
 
-//    @Autowired
+    //    @Autowired
 //    private PasswordEncoder passwordEncoder;
     @Autowired
     public ContactService(ContactRepository contactRepository, ModelMapper modelMapper) {
@@ -68,7 +69,6 @@ public class ContactService {
     }
 
 
-
     // 게시글 조회
     @Transactional(readOnly = true)
     public Page<ContactDTO> getContactPage(Pageable pageable) {
@@ -87,10 +87,50 @@ public class ContactService {
     }
 
 
-    //게시글 삭제
+    // 게시글 삭제
     public void deleteContact(Long bno) {
         contactRepository.deleteById(bno);
 
     }
 
+    // 게시판 관리자 답변
+    @Transactional
+    public void saveAdminComment(Long bno, String adminComment) {
+        // 게시글 조회
+        ContactEntity contact = contactRepository.findByBno(bno)
+                .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다. bno: " + bno));
+
+        // 관리자 댓글 저장
+        contact.setAdminComment(adminComment);
+
+        contactRepository.save(contact);
+    }
+
+    // 게시판 관리자 답변 수정
+    @Transactional
+    public void updateAdminComment(Long bno, String newAdminComment) {
+        // 게시글 조회
+        ContactEntity contact = contactRepository.findByBno(bno)
+                .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없습니다. bno: " + bno));
+
+        // 댓글 업데이트
+        contact.setAdminComment(newAdminComment);
+
+        contactRepository.save(contact);
+    }
+
+    // 게시판 관리자 답변 삭제
+    public void deleteAdminComment(Long bno) {
+        // bno로 게시글을 찾아서 adminComment 필드를 삭제
+        Optional<ContactEntity> contactOptional = contactRepository.findByBno(bno);
+        if (contactOptional.isPresent()) {
+            ContactEntity contact = contactOptional.get();
+            // adminComment 필드를 null로 업데이트
+            contact.setAdminComment(null);
+            contactRepository.save(contact);
+        } else {
+            // 해당 bno에 대한 게시글이 없는 경우 예외 처리
+            throw new RuntimeException("해당 bno에 대한 게시글을 찾을 수 없습니다: " + bno);
+        }
+    }
 }

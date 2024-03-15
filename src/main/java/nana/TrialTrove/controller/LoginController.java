@@ -17,25 +17,6 @@ public class LoginController {
         return "member/login";
     }
 
-//    @PostMapping("/login")
-//    public String login(@ModelAttribute MemberDTO memberDto, Model model) {
-//        String userId = memberDto.getUserId();
-//        String userPw = memberDto.getUserPw();
-//
-//        if (userId == null || userId.isEmpty() || userPw == null || userPw.isEmpty()) {
-//            model.addAttribute("error", "아이디와 비밀번호를 모두 입력해주세요.");
-//            return "member/login";
-//        }
-//
-//        if (loginService.login(userId, userPw)) {
-//            // 로그인 성공
-//            return "redirect:/"; // 로그인 후 이동할 페이지 경로
-//        } else {
-//            // 로그인 실패
-//            model.addAttribute("error", "아이디 또는 비밀번호가 올바르지 않습니다.");
-//            return "member/login";
-//        }
-//    }
 
     @GetMapping("/logout")
     public String logout() {

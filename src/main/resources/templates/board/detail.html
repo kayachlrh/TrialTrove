@@ -36,7 +36,7 @@
                     <h2>문의하기</h2>
                     <p></p>
                 </div>
-                <form class="form" th:object="${contactEntity}">
+                <form class="form" th:object="${contactDTO}">
                     <div class="col-lg-6 col-12">
                         <div class="form-group">
                             <input name="title" type="text" id="title" th:field="*{title}" readonly="readonly">
@@ -58,49 +58,64 @@
                         <div class="col-12">
                             <div class="form-group button d-flex justify-content-between">
                                 <a href="/board/list" class="btn">목록</a>
-                                <a th:href="@{'/board/modify/' + ${contactEntity.bno}}" class="btn modify-btn">수정</a>
+                                <a th:href="@{'/board/update/' + ${contactDTO.bno}}" class="btn modify-btn">수정</a>
                                 <button type="button" class="btn" onclick="confirmDelete()">삭제</button>
                             </div>
                         </div>
+                    </div>
+                 </form>
 
-                        <!-- Comments -->
-                        <div class="post-comments">
-                            <h3 class="comment-title"><span>comments</span></h3>
-                            <ul class="comments-list">
-                                <li>
-                                    <div class="comment-img">
-                                        <img src="assets/images/blog/comment1.jpg" class="rounded-circle" alt="img">
-                                    </div>
-                                    <div class="comment-desc">
-                                        <div class="desc-top">
-                                            <h6>관리자</h6>
-                                            <span class="date">19th May 2023</span>
-                                            <a href="javascript:void(0)" class="reply-link"><i class="lni lni-reply"></i>Reply</a>
-                                        </div>
-                                        <p>
-                                            Donec aliquam ex ut odio dictum, ut consequat leo interdum. Aenean nunc
-                                            ipsum, blandit eu enim sed, facilisis convallis orci. Etiam commodo
-                                            lectus
-                                            quis vulputate tincidunt. Mauris tristique velit eu magna maximus
-                                            condimentum.
-                                        </p>
-                                    </div>
-                                </li>
-                            </ul>
+                <!-- Comments -->
+                <div class="post-comments" th:if="${contactDTO.adminComment != null}">
+                    <h3 class="comment-title"><span>comments</span></h3>
+                    <ul class="comments-list" id="commentsList">
+                        <li>
+                            <div class="comment-desc">
+                                <div class="desc-top">
+                                    <h6>관리자</h6>
+                                    <span class="date" th:text="${#dates.format(#dates.createNow(), 'yy-MM-dd')}"></span>
+                                        <!-- 수정 버튼 -->
+                                        <a href="#" class="reply-link" th:if="${#authorization.expression('hasRole(''ADMIN'')')}" onclick="editComment(event)"><i class="lni lni-reply"></i>Edit</a>
+                                        <!-- 댓글 삭제 폼 -->
+                                        <form class="delete-form" th:if="${#authorization.expression('hasRole(''ADMIN'')')}" style="display: inline;">
+                                            <input type="hidden" name="bno" th:value="${contactDTO.bno}">
+                                            <button type="button" class="reply-link" style="margin-top: 70px;"><i class="lni lni-trash"></i>Del</button>
+                                        </form>
+                                </div>
+                                    <p th:text="${contactDTO.adminComment}"></p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- 댓글수정 폼 -->
+                <div id="editForm" class="comment-form" style="display: none;">
+                    <h3 class="comment-reply-title"><span>Edit Comment</span></h3>
+                    <form id="editCommentForm" th:action="@{/board/reply/update}" method="post">
+                        <input type="hidden" name="bno" th:value="${contactDTO.bno}"/>
+                        <div class="form-group">
+                            <textarea id="editComment" name="newComment" class="form-control" rows="3" placeholder="Edit your comment"></textarea>
                         </div>
-                        <div class="comment-form">
+                        <button type="submit" class="btn btn-primary" onclick="saveEdit()">Save</button>
+                        <button type="button" class="btn btn-primary" onclick="cancelEdit()">Cancel</button>
+                    </form>
+                </div>
+
+                <!-- 댓글등록 폼 -->
+                        <div class="comment-form" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
                             <h3 class="comment-reply-title"><span>Leave a comment</span></h3>
-                            <form action="#" method="POST">
+                            <form id="commentForm" th:action="@{/board/reply/{bno}/add(bno=${bno})}" method="post">
                                 <div class="row">
                                     <div class="col-lg-6 col-12">
                                         <div class="form-box form-group">
+                                            <input type="hidden" th:name="bno" th:value="${contactDTO.bno}"/>
                                             <input type="text" name="name" class="form-control form-control-custom"
-                                                   placeholder="관리자" />
+                                                   value="관리자" readonly />
                                         </div>
                                     </div>
                                     <div class="col-12">
                                         <div class="form-box form-group">
-                                                <textarea name="#" class="form-control form-control-custom"
+                                                <textarea name="adminComment" class="form-control form-control-custom"
                                                           placeholder="Your Comments"></textarea>
                                         </div>
                                     </div>
@@ -112,15 +127,14 @@
                                 </div>
                             </form>
 
-                            <!-- 삭제 폼 -->
-                            <form id="deleteForm" th:action="@{'/board/delete/' + ${contactEntity.bno}}" method="post">
+                            <!-- 게시글 삭제 폼 -->
+                            <form id="deleteForm" th:action="@{'/board/delete/' + ${contactDTO.bno}}" method="post">
                                 <input type="hidden" name="_method" value="delete">
 
                             </form>
                         </div>
                     </div>
                 </div>
-            </div>
     </section>
     <!-- End Comment -->
 
@@ -132,16 +146,126 @@
     </a>
 
 
-    <script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <script th:inline="javascript">
+
+<!--관리자 답변-->
+
+    $(document).ready(function() {
+    $('#commentForm').submit(function(event) {
+        // 기본 제출 동작을 중단시킵니다.
+        event.preventDefault();
+
+        console.log("Submit event triggered!");
+
+        // 폼에서 게시물 번호를 가져옵니다.
+        var bno = $('#commentForm input[name="bno"]').val();
+
+        // FormData 객체 생성
+        var formData = new FormData(this);
+
+        // AJAX 요청을 생성합니다.
+        $.ajax({
+            type: 'POST',
+            url: '/board/reply/' + bno + '/add',
+            data: formData,
+            processData: false, // FormData를 전송할 때 처리하지 않도록 설정
+            contentType: false, // 데이터 형식을 설정하지 않음
+            headers: {
+                // CSRF 토큰 설정
+                'X-CSRF-TOKEN': $('meta[name="_csrf"]').attr('content')
+            },
+            success: function(response) {
+                // 성공적으로 처리된 경우 실행되는 코드
+                console.log('댓글이 성공적으로 등록되었습니다.');
+            },
+            error: function(xhr, status, error) {
+                // 오류 발생 시 실행되는 코드
+                console.error('댓글을 등록하는 동안 오류가 발생했습니다: ' + error);
+            }
+        });
+    });
+});
+
+function addComment(data) {
+    console.log("addComment 함수가 호출되었습니다.");
+    var commentsDiv = document.getElementById("comments");
+    var newComment = document.createElement("p");
+    newComment.textContent = data.adminComment; // 서버로부터 받은 댓글 내용을 사용하여 생성
+    commentsDiv.appendChild(newComment);
+}
+
+<!--관리자 답변 수정-->
+
+function editComment(event) {
+    event.preventDefault();
+    // 해당 댓글 영역 찾기
+    var commentDesc = event.target.closest('.comment-desc');
+
+    // 기존 댓글 내용 가져오기
+    var previousComment = commentDesc.querySelector('p').innerText;
+
+    // 수정 폼에 이전 댓글 내용 설정
+    var editCommentTextarea = document.getElementById('editComment');
+    editCommentTextarea.value = previousComment;
+
+    // 수정 폼 보이도록 설정
+    var editForm = document.getElementById('editForm');
+    editForm.style.display = 'block';
+
+    // 기존 댓글 영역 숨기기
+    commentDesc.style.display = 'none';
+}
+
+    function cancelEdit() {
+        // 수정 폼 숨기기
+        var editForm = document.getElementById('editForm');
+        editForm.style.display = 'none';
+
+        // 기존 댓글 영역 보이도록 설정
+        var commentDesc = document.querySelector('.comment-desc');
+        commentDesc.style.display = 'block';
+    }
+
+<!--관리자 답변 삭제-->
+
+   $(document).ready(function() {
+    // "Del" 버튼 클릭 시 처리
+    $('.delete-form button').click(function(event) {
+        // 폼의 기본 동작 중단
+        event.preventDefault();
+
+        // 댓글이 속한 폼 요소 가져오기
+        var form = $(this).closest('form');
+
+        // bno 가져오기
+        var bno = form.find('input[name="bno"]').val();
+
+        // AJAX 요청 보내기
+        $.ajax({
+            type: 'POST',
+            url: '/board/reply/' + bno + '/delete',
+            success: function(response) {
+                console.log('댓글이 성공적으로 삭제되었습니다.');
+            },
+            error: function(xhr, status, error) {
+                // 오류 발생 시 실행될 코드
+                console.error('댓글 삭제 중 오류가 발생했습니다:', error);
+            }
+        });
+    });
+});
+
+<!-- 게시글 삭제-->
 function confirmDelete() {
         var form = document.getElementById('deleteForm');
         if (form && confirm('삭제하시겠습니까?')) {
             form.submit();
         }
     }
+
 </script>
-
-
 
 </th:block>
 </body>

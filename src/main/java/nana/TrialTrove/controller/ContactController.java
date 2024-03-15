@@ -2,14 +2,18 @@ package nana.TrialTrove.controller;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
 import nana.TrialTrove.domain.ContactDTO;
 import nana.TrialTrove.domain.ContactEntity;
 import nana.TrialTrove.service.ContactService;
+import nana.TrialTrove.service.MemberService;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -17,13 +21,14 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+import java.util.Map;
 
 
 @RequestMapping("/board/*")
 @Controller
-@Slf4j
 public class ContactController {
+
+    private static final Logger log = LoggerFactory.getLogger(MemberService.class);
 
     private final ContactService contactService;
     private final ModelMapper modelMapper;
@@ -88,7 +93,7 @@ public class ContactController {
 
     // 게시글 목록 조회
     @GetMapping("/list")
-    public String showContactList(Model model, @RequestParam(name ="page", defaultValue = "0") int page) {
+    public String showContactList(Model model, @RequestParam(name = "page", defaultValue = "0") int page) {
 
         // 한 페이지에 표시할 게시글 수
         int pageSize = 10;
@@ -122,7 +127,7 @@ public class ContactController {
 
     // 게시판 수정 페이지
     @Transactional
-    @GetMapping("/modify/{bno}")
+    @GetMapping("/update/{bno}")
     public String showModifyForm(@PathVariable(name = "bno") Long bno, Model model) {
         ContactDTO contactDTO = contactService.getContactByBno(bno);
 
@@ -141,7 +146,6 @@ public class ContactController {
     }
 
 
-
     // 게시판 삭제
     @PostMapping("/delete/{bno}")
     public String deleteContact(@PathVariable(name = "bno") Long bno) {
@@ -149,4 +153,35 @@ public class ContactController {
         return "redirect:/board/list";
     }
 
+
+    // 게시판 관리자 답변
+    @PostMapping("/reply/{bno}/add")
+    public String saveAdminComment(@PathVariable(name = "bno") Long bno,
+                                   @RequestParam(name = "adminComment") String adminComment) {
+
+        contactService.saveAdminComment(bno, adminComment);
+        return "redirect:/board/detail/" + bno;
+    }
+
+    // 게시판 관리자 답변 수정
+    @PostMapping("/reply/update")
+    public String updateComment(@RequestParam("bno") Long bno, @RequestParam("newComment") String newComment) {
+
+        contactService.updateAdminComment(bno, newComment);
+        return "redirect:/board/detail/" + bno; // 수정 후 게시글 상세 페이지로 리다이렉트
+    }
+
+    // 게시판 관리자 답변 삭제
+    @PostMapping("/reply/{bno}/delete")
+    public ResponseEntity<String> deleteAdminComment(@PathVariable(name = "bno") Long bno) {
+        try {
+            // 댓글 삭제 로직 호출
+            contactService.deleteAdminComment(bno);
+            return ResponseEntity.ok("댓글이 성공적으로 삭제되었습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("댓글 삭제에 실패했습니다.");
+        }
+    }
+
 }
+

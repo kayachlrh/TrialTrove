@@ -37,7 +37,9 @@ public class ContactDTO {
 
     private boolean deleted;
 
-    private boolean adminComment;
+    private String adminComment;
+
+    private LocalDateTime replyDate;
 
 
 }

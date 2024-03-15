@@ -34,7 +34,7 @@
           <h2>수정</h2>
           <p></p>
         </div>
-        <form class="form" method="post" th:action="@{'/board/modify/' + ${contactEntity.bno}}" th:object="${contactEntity}">
+        <form class="form" method="post" th:action="@{'/board/modify/' + ${contactDTO.bno}}" th:object="${contactDTO}">
           <div class="col-lg-6 col-12">
             <div class="form-group">
               <input name="title" type="text" id="title" placeholder="Title" required="required" th:field="*{title}">

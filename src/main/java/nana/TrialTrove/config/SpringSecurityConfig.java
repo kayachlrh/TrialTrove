@@ -21,6 +21,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import static org.springframework.boot.autoconfigure.security.servlet.PathRequest.toH2Console;
 import static org.springframework.security.config.Customizer.withDefaults;
@@ -47,10 +48,10 @@ public class SpringSecurityConfig {
 //                            .requestMatchers("/oauth/naver").permitAll()
 //                            .requestMatchers("/member/myInfo","/board/write").authenticated();
 
-                    authorizeRequests.requestMatchers("/member/myInfo","/board/write")
+                    authorizeRequests.requestMatchers("/member/myInfo","/board/write","/board/detail")
                             .hasAnyRole("ADMIN", "USER");
 
-                    authorizeRequests.requestMatchers("/admin/**")
+                    authorizeRequests.requestMatchers("/board/reply/**")
                             .hasRole("ADMIN");
 
                     authorizeRequests.anyRequest().permitAll();
@@ -82,7 +83,7 @@ public class SpringSecurityConfig {
 
         http
                 .logout(logout -> logout
-                        .logoutUrl("/member/logout")
+                        .logoutRequestMatcher(new AntPathRequestMatcher("/member/logout"))
                         .logoutSuccessUrl("/")
                         .invalidateHttpSession(true)
                         .deleteCookies("remember-me")
