@@ -82,7 +82,7 @@
                                             <button type="button" class="reply-link" style="margin-top: 70px;"><i class="lni lni-trash"></i>Del</button>
                                         </form>
                                 </div>
-                                    <p th:text="${contactDTO.adminComment}"></p>
+                                    <p id="adminComment" th:text="${contactDTO.adminComment}"></p>
                             </div>
                         </li>
                     </ul>
@@ -121,7 +121,7 @@
                                     </div>
                                     <div class="col-12">
                                         <div class="button">
-                                            <button type="submit" class="btn">Post Comment</button>
+                                            <button id="postCommentBtn" type="submit" class="btn">Post Comment</button>
                                         </div>
                                     </div>
                                 </div>
@@ -179,6 +179,7 @@
             success: function(response) {
                 // 성공적으로 처리된 경우 실행되는 코드
                 console.log('댓글이 성공적으로 등록되었습니다.');
+                window.location.reload();
             },
             error: function(xhr, status, error) {
                 // 오류 발생 시 실행되는 코드
@@ -188,13 +189,7 @@
     });
 });
 
-function addComment(data) {
-    console.log("addComment 함수가 호출되었습니다.");
-    var commentsDiv = document.getElementById("comments");
-    var newComment = document.createElement("p");
-    newComment.textContent = data.adminComment; // 서버로부터 받은 댓글 내용을 사용하여 생성
-    commentsDiv.appendChild(newComment);
-}
+
 
 <!--관리자 답변 수정-->
 
@@ -248,6 +243,7 @@ function editComment(event) {
             url: '/board/reply/' + bno + '/delete',
             success: function(response) {
                 console.log('댓글이 성공적으로 삭제되었습니다.');
+                window.location.reload();
             },
             error: function(xhr, status, error) {
                 // 오류 발생 시 실행될 코드
