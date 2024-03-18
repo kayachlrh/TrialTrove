@@ -8,6 +8,7 @@ import nana.TrialTrove.repository.UserProfileRepository;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -37,6 +38,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         // OAuth2 서비스의 유저 정보들
         Map<String, Object> attributes = oAuth2User.getAttributes();
 
+        System.out.println("Received attributes from OAuth2 provider: " + attributes.toString());
+
         // registrationId에 따라 유저 정보를 통해 공통된 UserProfile 객체로 만들어 줌
         UserProfile userProfile = OAuthAttributes.extract(registrationId, attributes);
 
@@ -46,17 +49,16 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     }
 
     private UserProfile saveOrUpdateUserProfile(UserProfile userProfile) {
-        // userProfileRepository에서 OAuthId로 사용자를 찾아봅니다.
-        Optional<UserProfile> userProfileOptional = userProfileRepository.findByOauthId(userProfile.getOauthId());
+        // userProfileRepository에서 Email로 사용자를 찾아봅니다.
+        Optional<UserProfile> userProfileOptional = userProfileRepository.findByEmail(userProfile.getEmail());
 
         // 찾은 사용자가 있으면 해당 사용자를 업데이트하고, 없으면 새로운 사용자로 저장합니다.
         if (userProfileOptional.isPresent()) {
             // 사용자 업데이트
             UserProfile existingUserProfile = userProfileOptional.get();
             // 업데이트할 사용자의 정보를 새로운 사용자 정보로 설정
-            existingUserProfile.setUserId(userProfile.getUserId());
             existingUserProfile.setName(userProfile.getName());
-            existingUserProfile.setEmail(userProfile.getEmail());
+            // existingUserProfile.setEmail(userProfile.getEmail());
             // userProfileRepository를 사용하여 업데이트된 사용자를 저장
             userProfile = userProfileRepository.save(existingUserProfile);
         } else {
@@ -69,7 +71,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private DefaultOAuth2User createDefaultOAuth2User(UserProfile userProfile, Map<String, Object> attributes,
                                                       String userNameAttributeName) {
-        User user = userProfile.toUser();
+        UserDetails userDetails = userProfile.toUserDetails();
 
         // User 객체의 역할 정보를 가져옴
         Collection<? extends GrantedAuthority> authorities = Collections.singleton(new SimpleGrantedAuthority(UserRole.USER.getValue()));
@@ -82,3 +84,4 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         );
     }
 }
+

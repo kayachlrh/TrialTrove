@@ -1,6 +1,7 @@
 package nana.TrialTrove.config;
 
 import lombok.RequiredArgsConstructor;
+import nana.TrialTrove.service.CustomOAuth2UserService;
 import nana.TrialTrove.service.MemberDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,6 +33,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 public class SpringSecurityConfig {
 
     private final MemberDetailsService memberDetailsService;
+    private final CustomOAuth2UserService customOAuth2UserService;
 
     // 스프링 시큐리티 기능 비활성화
     @Bean
@@ -44,9 +46,6 @@ public class SpringSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http, OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService) throws Exception {
         http
                 .authorizeHttpRequests((authorizeRequests) -> {
-//                    authorizeRequests
-//                            .requestMatchers("/oauth/naver").permitAll()
-//                            .requestMatchers("/member/myInfo","/board/write").authenticated();
 
                     authorizeRequests.requestMatchers("/member/myInfo","/board/write","/board/detail")
                             .hasAnyRole("ADMIN", "USER");
@@ -77,7 +76,7 @@ public class SpringSecurityConfig {
                 .oauth2Login(oauth2 -> {
                 oauth2.defaultSuccessUrl("/"); // 로그인 성공 후 이동할 페이지 URL
                 oauth2.userInfoEndpoint(userInfo -> {
-                    userInfo.userService(oAuth2UserService);
+                    userInfo.userService(customOAuth2UserService);
                 });
             });
 

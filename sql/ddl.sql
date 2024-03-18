@@ -49,4 +49,11 @@ ALTER TABLE member ADD COLUMN is_admin BOOLEAN DEFAULT FALSE;
 
 ALTER TABLE board ALTER COLUMN adminComment VARCHAR(255);
 
-
+-- 네이버로그인 프로필
+CREATE TABLE userProfile (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    oauthId VARCHAR(255),
+    userId VARCHAR(255),
+    name VARCHAR(255),
+    email VARCHAR(255)
+);
