@@ -19,6 +19,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Map;
@@ -48,18 +49,12 @@ public class ContactController {
 
     // 게시글 작성 처리
     @PostMapping("/contact")
-    public String createContact(@Valid @ModelAttribute("contactDTO") ContactDTO contactDTO, BindingResult bindingResult, Model model) {
+    public String createContact(@Valid ContactDTO contactDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
-            // 유효성 검사 오류가 있을 경우
-            List<FieldError> errors = bindingResult.getFieldErrors();
-            for (FieldError error : errors) {
-                model.addAttribute(error.getField() + "Error", error.getDefaultMessage());
-            }
-            return "board/write"; // 오류가 있는 폼 페이지로 리다이렉트 또는 해당 오류 페이지로 이동
+            return "/board/write"; // 오류가 있는 폼 페이지로 리다이렉트
         } else {
             // 유효성 검사 통과 시 데이터를 저장하고 목록 페이지로 이동
             ContactDTO createdContactDTO = contactService.createContact(contactDTO);
-
             return "redirect:/board/list"; // 게시판 메인 페이지로 리다이렉트
         }
     }

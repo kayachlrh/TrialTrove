@@ -20,12 +20,14 @@ public class ContactDTO {
     @Size(max = 20, message = "20자 이하만 가능합니다.")
     private String title;
 
-    @NotEmpty(message = "내용은 필수 입력 항목입니다.")
-    private String content;
-
     @NotEmpty(message = "회원 이름은 필수 입력 항목입니다.")
     @Size(max = 5, message = "회원 이름은 최대 5자까지 입력 가능합니다.")
     private String writer;
+
+
+    @NotEmpty(message = "내용은 필수 입력 항목입니다.")
+    private String content;
+
 
     private LocalDateTime regdate;
 

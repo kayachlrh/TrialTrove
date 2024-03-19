@@ -113,10 +113,12 @@
                                 </th:block>
                             </ul>
                         </div>
+                        <th:block sec:authorize="isAuthenticated()">
                         <!-- 관리자만 체험단모집 게시 가능 -->
                         <div class="button header-button">
                             <a href="javascript:void(0)" class="btn">Post an Trove</a>
                         </div>
+                        </th:block>
                     </nav> <!-- navbar -->
                 </div>
             </div>

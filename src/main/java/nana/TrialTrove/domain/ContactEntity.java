@@ -22,9 +22,10 @@ public class ContactEntity {
 
     private String title;
 
+    private String writer;
+
     private String content;
 
-    private String writer;
 
     @CreatedDate
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false)
