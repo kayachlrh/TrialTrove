@@ -70,7 +70,7 @@
                                                 <li class="mega-menu-title">Dashboard</li>
                                                 <li class="nav-item"><a href="javascript:void(0)">Account Overview</a>
                                                 </li>
-                                                <li class="nav-item"><a href="javascript:void(0)">내 정보</a>
+                                                <li class="nav-item"><a href="/member/myInfo">내 정보</a>
                                                 </li>
                                                 <li class="nav-item"><a href="javascript:void(0)">내 보물</a></li>
                                                 <li class="nav-item"><a href="javascript:void(0)">보석함</a>
@@ -113,7 +113,7 @@
                                 </th:block>
                             </ul>
                         </div>
-                        <th:block sec:authorize="isAuthenticated()">
+                        <th:block sec:authorize="hasRole('ADMIN')">
                         <!-- 관리자만 체험단모집 게시 가능 -->
                         <div class="button header-button">
                             <a href="javascript:void(0)" class="btn">Post an Trove</a>

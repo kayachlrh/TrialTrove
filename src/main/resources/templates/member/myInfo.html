@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html class="no-js" lang="zxx"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/layout}">
+
+
+
+<body>
+<th:block layout:fragment="content">
+
+  <!-- Start Breadcrumbs -->
+  <div class="breadcrumbs">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-6 col-md-6 col-12">
+          <div class="breadcrumbs-content">
+            <h1 class="page-title">내 정보</h1>
+          </div>
+        </div>
+        <div class="col-lg-6 col-md-6 col-12">
+          <ul class="breadcrumb-nav">
+            <li><a href="../main/index.html">Home</a></li>
+            <li>내 정보</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- End Breadcrumbs -->
+
+  <!-- Start Dashboard Section -->
+  <section class="dashboard section">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-3 col-md-4 col-12">
+          <!-- Start Dashboard Sidebar -->
+          <div class="dashboard-sidebar">
+            <h3 th:text="${#authentication.principal.username}">
+                <span><a href="javascript:void(0)" th:text="${#authentication.principal.username}"></a></span>
+              </h3>
+            <div class="dashboard-menu">
+              <ul>
+                <li><a href="dashboard.html"><i class="lni lni-dashboard"></i> Dashboard</a></li>
+                <li><a class="active" href="/member/myInfo"><i class="lni lni-pencil-alt"></i>
+                  내 정보 </a></li>
+                <li><a href="../trial/favorite"><i class="lni lni-heart"></i> 보물함 </a></li>
+                <li><a href="../trial/apply"><i class="lni lni-bookmark"></i> 보물지도 </a></li>
+                <li><a href="/member/delete"><i class="lni lni-trash"></i> 회원탈퇴 </a></li>
+              </ul>
+              <div class="button">
+                <a class="btn" th:href="@{/member/logout}">Logout</a>
+              </div>
+            </div>
+          </div>
+          <!-- Start Dashboard Sidebar -->
+        </div>
+        <div class="col-lg-9 col-md-8 col-12">
+          <div class="main-content">
+            <!-- Start Profile Settings Area -->
+            <div class="dashboard-block mt-0 profile-settings-block">
+              <h3 class="block-title">Profile Settings</h3>
+              <div class="inner-block">
+                <form class="profile-setting-form" method="post" action="/member/updateMyInfo">
+                  <div class="row">
+                    <div class="col-lg-6 col-12">
+                      <div class="form-group">
+                        <label>Name*</label>
+                        <input th:value="${currentUser.name}" name="name" type="text">
+                      </div>
+                    </div>
+                    <div class="col-lg-6 col-12">
+                      <div class="form-group">
+                        <label>ID*</label>
+                        <input th:value="${#authentication.principal.username}" name="username" type="text" readonly>
+                      </div>
+                    </div>
+                    <div class="col-lg-6 col-12">
+                      <div class="form-group">
+                        <label>Email Address*</label>
+                        <input th:value="${currentUser.email}" name="email" type="email">
+                      </div>
+                    </div>
+                    <div class="col-12">
+                      <div class="form-group message">
+                        <label>About You*</label>
+                        <textarea name="message" placeholder="나를 자유롭게 표현해봐"></textarea>
+                      </div>
+                    </div>
+                    <div class="col-12">
+                      <div class="form-group button mb-0">
+                        <button type="submit" class="btn ">Update Profile</button>
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+            <!-- End Profile Settings Area -->
+            <!-- Start Password Change Area -->
+            <div class="dashboard-block password-change-block">
+              <h3 class="block-title">Change Password</h3>
+              <div class="inner-block">
+                <div class="alert alert-success" th:if="${successMessage}">
+                  <p th:text="${successMessage}"></p>
+                </div>
+                <div class="alert alert-danger" th:if="${errorMessage}">
+                  <p th:text="${errorMessage}"></p>
+                </div>
+                <form class="default-form-style" method="post" action="/member/updatePassword" th:object="${passwordForm}">
+                  <div class="row">
+                    <div class="col-12">
+                      <div class="form-group">
+                        <label>Current Password*</label>
+                        <input type="password" id="currentPassword" name="currentPassword" required
+                               placeholder="Enter current password" th:field="*{currentPassword}">
+                        <span th:if="${#fields.hasErrors('currentPassword')}" th:errors="*{currentPassword}"></span>
+                      </div>
+                    </div>
+                    <div class="col-12">
+                      <div class="form-group">
+                        <label>New Password*</label>
+                        <input type="password" id="newPassword" name="newPassword" required
+                               placeholder="Enter new password" th:field="*{newPassword}">
+                        <span th:if="${#fields.hasErrors('newPassword')}" th:errors="*{newPassword}"></span>
+                      </div>
+                    </div>
+                    <div class="col-12">
+                      <div class="form-group">
+                        <label>Confirm Password*</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword"
+                               placeholder="Confirm password" required onkeyup="checkPassword()"/>
+                        <div id="checkPwError"></div>
+                      </div>
+                    </div>
+                    <div class="col-12">
+                      <div class="form-group button mb-0">
+                        <button type="submit" class="btn ">Change Password</button>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+            <!-- End Password Change Area -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- End Dashboard Section -->
+
+  <!-- ========================= scroll-top ========================= -->
+  <a href="#" class="scroll-top btn-hover">
+    <i class="lni lni-chevron-up"></i>
+  </a>
+
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+  //비밀번호 유효검사
+    function checkPassword() {
+        var password = document.getElementById("newPassword");
+        var confirmPassword = document.getElementById("confirmPassword");
+        var errorDiv = document.getElementById("checkPwError");
+
+        if (password.value !== confirmPassword.value) {
+            errorDiv.innerHTML = "비밀번호가 일치하지 않습니다";
+            errorDiv.style.color = "red";
+        } else {
+            errorDiv.innerHTML = "";
+        }
+    }
+</script>
+</th:block>
+</body>
+</html>

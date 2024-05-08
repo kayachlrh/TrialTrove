@@ -1,8 +1,11 @@
 package nana.TrialTrove;
 
 import nana.TrialTrove.domain.MemberDTO;
+import nana.TrialTrove.domain.MemberEntity;
+import nana.TrialTrove.repository.MemberRepository;
 import nana.TrialTrove.service.MemberService;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -13,7 +16,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -24,6 +32,9 @@ public class MemberControllerTest {
 
     @MockBean
     private MemberService memberService;
+
+    @Mock
+    private MemberRepository memberRepository;
 
 
     @Test
@@ -82,5 +93,23 @@ public class MemberControllerTest {
 //                .andExpect(MockMvcResultMatchers.model().attributeExists("error"))
 //                .andExpect(MockMvcResultMatchers.view().name("member/login"));
 //    }
+
+    @Test
+    public void testFindByUserId() {
+        // 가짜 사용자 ID와 가짜 사용자 엔터티 생성
+        String userId = "testUser";
+        MemberEntity fakeMember = new MemberEntity();
+        fakeMember.setUserId(userId);
+
+        // findByUserId 메서드가 호출될 때 가짜 사용자 엔터티 반환하도록 설정
+        when(memberRepository.findByUserId(userId)).thenReturn(Optional.of(fakeMember));
+
+        // 메서드 호출
+        Optional<MemberEntity> optionalMember = memberRepository.findByUserId(userId);
+
+        // 결과 확인
+        assertTrue(optionalMember.isPresent());
+        assertEquals(fakeMember.getUserId(), optionalMember.get().getUserId());
+    }
 }
 

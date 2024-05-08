@@ -47,12 +47,11 @@ public class SpringSecurityConfig {
         http
                 .authorizeHttpRequests((authorizeRequests) -> {
 
-                    authorizeRequests.requestMatchers("/member/myInfo","/board/write","/board/detail")
+                    authorizeRequests.requestMatchers("/member/myInfo","/member/updateMyInfo","/board/write","/board/detail")
                             .hasAnyRole("ADMIN", "USER");
 
                     authorizeRequests.requestMatchers("/board/reply/**")
                             .hasRole("ADMIN");
-
                     authorizeRequests.anyRequest().permitAll();
                 })
                 .formLogin((formLogin) -> {

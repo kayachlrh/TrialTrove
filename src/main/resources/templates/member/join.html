@@ -100,6 +100,9 @@
                 if (response === true) {
                     alert("이미 사용 중인 아이디입니다.");
                     document.getElementById("isDuplicateChecked").value = "false";
+                } else if(response === "") {
+                    alert("아이디를 입력해주세요.");
+                    document.getElementById("isDuplicateChecked").value = "false";
                 } else {
                     alert("사용할 수 있는 아이디입니다.");
                     document.getElementById("isDuplicateChecked").value = "true";

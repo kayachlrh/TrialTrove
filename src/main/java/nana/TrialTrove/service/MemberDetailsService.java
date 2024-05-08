@@ -1,6 +1,7 @@
 package nana.TrialTrove.service;
 
 import lombok.RequiredArgsConstructor;
+import nana.TrialTrove.domain.MemberDTO;
 import nana.TrialTrove.domain.MemberEntity;
 import nana.TrialTrove.domain.UserRole;
 import nana.TrialTrove.repository.MemberRepository;
@@ -36,6 +37,13 @@ public class MemberDetailsService implements UserDetailsService {
                     return new UsernameNotFoundException(errorMessage);
                 });
 
+        // MemberEntity를 MemberDTO로 변환
+        MemberDTO memberDTO = new MemberDTO();
+        memberDTO.setId(member.getId());
+        memberDTO.setUserId(member.getUserId());
+        memberDTO.setEmail(member.getEmail());
+        memberDTO.setName(member.getName());
+
         List<GrantedAuthority> authorities = new ArrayList<>();
         if ("admin".equals(userId)) {
             authorities.add(new SimpleGrantedAuthority(UserRole.ADMIN.getValue()));
@@ -45,6 +53,6 @@ public class MemberDetailsService implements UserDetailsService {
             log.info("사용자 {}에게 USER 권한이 부여되었습니다.", userId);
         }
         log.info("사용자 {}가 성공적으로 로그인하였습니다.", userId);
-        return new User(member.getUserId(), member.getUserPw(), authorities);
+        return new User(memberDTO.getUserId(), member.getUserPw(), authorities);
     }
 }

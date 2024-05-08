@@ -68,15 +68,25 @@
                     <p th:text="${contact.bno}"></p>
                   </div>
                   <div class="col-lg-5 col-md-5 col-12">
-                    <div sec:authorize="hasRole('ADMIN')">
-                      <a th:href="@{'/board/detail/' + ${contact.bno}}">
-                        <span th:text="${contact.title}"></span>
-                      </a>
-                    </div>
-                    <div sec:authorize="!hasRole('ADMIN')">
-                      <a href="#" th:attr="onclick='javascript:submitPasswordForm(\'' + ${contact.bno} + '\');'">
-                        <span th:text="${contact.title}"></span>
-                      </a>
+                    <div class="d-flex align-items-center justify-content-between"> <!-- 부모 요소 -->
+                      <!-- 관리자-->
+                      <div sec:authorize="hasRole('ADMIN')" class="d-flex align-items-center">
+                        <a th:href="@{'/board/detail/' + ${contact.bno}}">
+                          <span th:text="${contact.title}"></span>
+                        </a>
+                        <div th:if="${contact.adminComment != null}" class="list-icon ms-2"> <!-- 아이콘 -->
+                          <i class="lni lni-checkmark-circle"></i>
+                        </div>
+                      </div>
+
+                      <div sec:authorize="!hasRole('ADMIN')" class="d-flex align-items-center"> <!-- 아이콘과 제목을 감싸는 부모 요소 -->
+                        <a href="#" th:attr="onclick='javascript:submitPasswordForm(\'' + ${contact.bno} + '\');'">
+                          <span th:text="${contact.title}"></span>
+                        </a>
+                        <div th:if="${contact.adminComment != null}" class="list-icon ms-2"> <!-- 아이콘 -->
+                          <i class="lni lni-checkmark-circle"></i>
+                        </div>
+                      </div>
                     </div>
                   </div>
                   <div class="col-lg-2 col-md-2 col-12">
@@ -89,7 +99,6 @@
                 </div>
                 <!-- Hidden form to submit password -->
                 <form th:id="'submitPasswordForm' + ${contact.bno}" th:action="@{'/board/checkPassword/' + ${contact.bno}}" method="post">
-<!--                  <input type="hidden" name="_csrf" th:value="${_csrf.token}">-->
                   <input type="hidden" name="password" th:value="${contact.bno}" th:id="'passwordField' + ${contact.bno}">
                 </form>
               </div>
