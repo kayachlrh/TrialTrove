@@ -12,6 +12,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -74,6 +75,9 @@ public class MemberEntity implements UserDetails {
     public boolean isEnabled() {
         return true; // 계정 활성 여부, 여기서는 항상 true
     }
+
+    @OneToMany(mappedBy = "ownerId")
+    private List<ProductEntity> products = new ArrayList<>();
 }
 
 

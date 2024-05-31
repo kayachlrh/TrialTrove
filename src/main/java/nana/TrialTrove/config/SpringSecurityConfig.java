@@ -50,8 +50,9 @@ public class SpringSecurityConfig {
                     authorizeRequests.requestMatchers("/member/myInfo","/member/updateMyInfo","/board/write","/board/detail")
                             .hasAnyRole("ADMIN", "USER");
 
-                    authorizeRequests.requestMatchers("/board/reply/**")
+                    authorizeRequests.requestMatchers("/board/reply/**","/product/enroll")
                             .hasRole("ADMIN");
+                    authorizeRequests.requestMatchers("/uploads/**").permitAll();
                     authorizeRequests.anyRequest().permitAll();
                 })
                 .formLogin((formLogin) -> {
@@ -64,7 +65,7 @@ public class SpringSecurityConfig {
                 .csrf(csrf -> csrf
                 //.csrfTokenRequestHandler()
                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                .ignoringRequestMatchers("/", "/member/**", "/board/**")
+                .ignoringRequestMatchers("/", "/member/**", "/board/**", "/product/**")
         );
         http
                 .sessionManagement((sessionManagement) ->
@@ -123,8 +124,6 @@ public class SpringSecurityConfig {
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-
 
 
 }

@@ -36,14 +36,12 @@ import java.util.Optional;
 public class MemberController {
 
     private final MemberService memberService;
-    private final MemberDetailsService memberDetailsService;
     private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
-    public MemberController(MemberService memberService, MemberDetailsService memberDetailsService, MemberRepository memberRepository, BCryptPasswordEncoder passwordEncoder) {
+    public MemberController(MemberService memberService, MemberRepository memberRepository, BCryptPasswordEncoder passwordEncoder) {
         this.memberService = memberService;
-        this.memberDetailsService = memberDetailsService;
         this.memberRepository = memberRepository;
         this.passwordEncoder = passwordEncoder;
     }
