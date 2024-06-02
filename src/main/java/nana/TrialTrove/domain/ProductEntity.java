@@ -18,7 +18,7 @@ public class ProductEntity {
     private Long id;
 
     @Column(name = "name")
-    private String ProductName;
+    private String productName;
 
     private String image;
 

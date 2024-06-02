@@ -25,15 +25,17 @@ public class ProductDTO {
     private Long categoryId; // Category의 id를 참조
     private String description;
     private String activityType;
+    private String categoryName; // Category의 name 참조
 
     private MultipartFile imageFile; // 업로드된 이미지 파일
 
     // 체험 목록
-    public ProductDTO(String productName, String image, Long categoryId, String location, int maxApplicants) {
+    public ProductDTO(String productName, String image, String location, int maxApplicants, String activityType, String categoryName) {
         this.productName = productName;
         this.image = image;
-        this.categoryId = categoryId;
         this.location = location;
         this.maxApplicants = maxApplicants;
+        this.activityType = activityType;
+        this.categoryName = categoryName;
     }
 }

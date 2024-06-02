@@ -38,8 +38,8 @@
             <!-- Start Single Widget -->
             <div class="single-widget search">
               <h3>Search Ads</h3>
-              <form action="#">
-                <input type="text" placeholder="Search Here...">
+              <form action="/product/trialList" method="get">
+                <input type="text" name="search" placeholder="Search Here...">
                 <button type="submit"><i class="lni lni-search-alt"></i></button>
               </form>
             </div>
@@ -109,7 +109,7 @@
                             <span class="flat-badge sale" th:text="${product.activityType}"></span>
                           </div>
                           <div class="content">
-                            <a href="javascript:void(0)" class="tag" th:text="${product.categoryId}"></a>
+                            <a href="javascript:void(0)" class="tag" th:text="${product.categoryName}"></a>
                             <h3 class="title">
                               <a href="/product/detail" th:text="${product.productName}"></a>
                             </h3>
@@ -131,11 +131,16 @@
                         <!-- Pagination -->
                         <div class="pagination left">
                           <ul class="pagination-list">
-                            <li><a href="javascript:void(0)">1</a></li>
-                            <li class="active"><a href="javascript:void(0)">2</a></li>
-                            <li><a href="javascript:void(0)">3</a></li>
-                            <li><a href="javascript:void(0)">4</a></li>
-                            <li><a href="javascript:void(0)"><i class="lni lni-chevron-right"></i></a></li>
+                            <li class="active" th:each="pageNumber : ${#numbers.sequence(0, totalPages - 1)}"
+                                th:class="${pageNumber == currentPage ? 'active' : ''}">
+                              <a th:href="@{/product/trialList(page=${pageNumber})}" th:text="${pageNumber + 1}"></a>
+                            </li>
+                            <!-- 다음 버튼 -->
+                            <li th:if="${currentPage < totalPages - 1}">
+                              <a th:href="@{/product/trialList(page=${currentPage + 1})}" aria-label="Next">
+                                <span aria-hidden="true" class="lni lni-chevron-right"></span>
+                              </a>
+                            </li>
                           </ul>
                         </div>
                         <!--/ End Pagination -->
@@ -186,6 +191,60 @@
     })
     .catch(error => console.error('Error:', error));
 });
+
+// 카테고리 클릭 버튼
+ document.querySelectorAll('.list li a').forEach(item => {
+    item.addEventListener('click', function() {
+      const category = this.getAttribute('data-category'); // 클릭한 카테고리 이름
+
+      // AJAX 요청을 통해 서버에서 해당 카테고리의 상품 목록을 가져옴
+      fetch(`/product/trialList?category=${category}&page=0`)
+        .then(response => response.text())
+        .then(html => {
+          // 가져온 HTML을 사용하여 상품 목록을 업데이트
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, 'text/html');
+          const productsHtml = doc.querySelector('.category-grid-list .tab-content');
+          document.querySelector('.category-grid-list .tab-content').innerHTML = productsHtml.innerHTML;
+
+          // 페이지네이션 업데이트
+          const paginationHtml = doc.querySelector('.pagination');
+          document.querySelector('.pagination').innerHTML = paginationHtml.innerHTML;
+        })
+        .catch(error => console.error('Error:', error));
+    });
+  });
+
+// 카테고리 및 검색 기능 처리
+    document.querySelector('.single-widget.search form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const search = this.querySelector('input[name="search"]').value;
+        fetchProducts({ search });
+    });
+
+    function fetchProducts(params) {
+        let url = '/product/trialList?';
+        for (const key in params) {
+            if (params[key]) {
+                url += `${key}=${params[key]}&`;
+            }
+        }
+
+        fetch(url)
+        .then(response => response.text())
+        .then(html => {
+            // 가져온 HTML을 사용하여 상품 목록을 업데이트
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const productsHtml = doc.querySelector('.category-grid-list .tab-content');
+            document.querySelector('.category-grid-list .tab-content').innerHTML = productsHtml.innerHTML;
+
+            // 페이지네이션 업데이트
+            const paginationHtml = doc.querySelector('.pagination');
+            document.querySelector('.pagination').innerHTML = paginationHtml.innerHTML;
+        })
+        .catch(error => console.error('Error:', error));
+    }
 
   </script>
 </th:block>
