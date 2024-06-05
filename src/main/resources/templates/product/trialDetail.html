@@ -38,38 +38,31 @@
                         <div class="product-images">
                             <main id="gallery">
                                 <div class="main-img">
-                                    <img src="assets/images/item-details/image1.jpg" id="current" alt="#">
-                                </div>
-                                <div class="images">
-                                    <img src="assets/images/item-details/image1.jpg" class="img" alt="#">
-                                    <img src="assets/images/item-details/image2.jpg" class="img" alt="#">
-                                    <img src="assets/images/item-details/image3.jpg" class="img" alt="#">
-                                    <img src="assets/images/item-details/image4.jpg" class="img" alt="#">
-                                    <img src="assets/images/item-details/image5.jpg" class="img" alt="#">
+                                    <img th:src="@{/uploads/{image}(image=${product.image})}" id="current" alt="Product Image">
                                 </div>
                             </main>
                         </div>
                     </div>
                     <div class="col-lg-6 col-md-12 col-12">
                         <div class="product-info">
-                            <h2 class="title">MacBook Pro 13-inch</h2>
-                            <p class="location"><i class="lni lni-map-marker"></i><a href="javascript:void(0)">New York, USA</a></p>
-                            <h3 class="price">Category</h3>
+                            <h2 class="title" th:text="${product.location}"></h2>
+                            <p class="location" th:text="${product.categoryName}"><i class="lni lni-map-marker"></i><a href="javascript:void(0)"></a></p>
+                            <h3 class="price" id="productName" th:text="${product.productName}" ></h3>
+                            <input type="text" id="productNameInput" value="" style="display:none;">
                             <div class="list-info">
                                 <h4>Informations</h4>
                                 <ul>
-                                    <li><span>Seller Name:</span> New</li>
-                                    <li><span>모집인원:</span> </li>
-                                    <li><span>모집날짜:</span> </li>
+                                    <li><span th:text="${product.sellerName}"></span></li>
+                                    <li><span id="maxApplicants" th:text="${'모집인원: ' + product.maxApplicants}" onclick="updateText('maxApplicants')"></span> </li>
+                                    <li><span th:text="${'모집날짜: ' + product.deadlineDate}"></span> </li>
                                 </ul>
                             </div>
                             <div class="contact-info">
                                 <ul>
                                     <li>
-                                        <a href="tel:+002562352589" class="call">
-                                            <i class="lni lni-alarm"></i>
-                                            리뷰참여
-                                            <span>Call & Get more info</span>
+                                        <a class="call">
+                                            <i class="lni lni-alarm" th:text="${product.activityType}"></i>
+                                            <span></span>
                                         </a>
                                     </li>
                                 </ul>
@@ -84,30 +77,16 @@
                         <!-- Start Single Block -->
                         <div class="single-block description">
                             <h3>Description</h3>
-                            <p>
-                                There are many variations of passages of Lorem Ipsum available, but the majority have
-                                suffered alteration in some form, by injected humour, or randomised words which don't
-                                look even slightly believable.
-                            </p>
-                            <ul>
-                                <li>Model: Apple MacBook Pro 13.3-Inch MYDA2</li>
-                                <li>Apple M1 chip with 8-core CPU and 8-core GPU</li>
-                                <li>8GB RAM</li>
-                                <li>256GB SSD</li>
-                                <li>13.3-inch 2560x1600 LED-backlit Retina Display</li>
-                            </ul>
-                            <p>The generated Lorem Ipsum is therefore always free from repetition, injected humour, or
-                                non-characteristic words etc.</p>
+                            <pre id="description" th:text="${product.description}" onclick="updateText('description')"></pre>
                         </div>
                         <!-- End Single Block -->
                         <!-- Start Single Block -->
                         <div class="single-block tags">
                             <h3>Tags</h3>
                             <ul>
-                                <li><a href="javascript:void(0)">Bike</a></li>
-                                <li><a href="javascript:void(0)">Services</a></li>
-                                <li><a href="javascript:void(0)">Brand</a></li>
-                                <li><a href="javascript:void(0)">Popular</a></li>
+                                <li><a href="javascript:void(0)">키워드</a></li>
+                                <li><a href="javascript:void(0)">1000자 이상</a></li>
+                                <li><a href="javascript:void(0)">이미지 10장 이상</a></li>
                             </ul>
                         </div>
                         <!-- End Single Block -->
@@ -140,7 +119,16 @@
                                 </div>
                             </div>
                             <!-- End Single Block -->
+                        <th:block sec:authorize="hasRole('ADMIN')">
+                        <div class="dashboard-sidebar">
+                            <div class="dashboard-menu">
+                                <div class="button">
+                                    <button type="button" class="btn alt-btn" id="editButton" onclick="toggleEdit()">수정</button>
+                                    <a class="btn" href="javascript:void(0)">삭제</a>
+                                </div>
+                            </div>
                         </div>
+                        </th:block>
                     </div>
                 </div>
             </div>
@@ -155,7 +143,72 @@
     </a>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script>
+    const product = {
+        id: [[${product.id}]],
+        productName: [[${#strings.escapeJavaScript(product.productName)}]],
+        maxApplicants: [[${product.maxApplicants}]],
+        description: [[${#strings.escapeJavaScript(product.description)}]]
+    };
 
+    document.getElementById('productNameInput').value = product.productName;
+    document.getElementById('maxApplicantsInput').value = product.maxApplicants;
+    document.getElementById('descriptionInput').value = product.description;
+
+    function toggleEdit() {
+        var editButton = document.getElementById('editButton');
+        var isEditing = editButton.innerText === '수정완료';
+
+        if (isEditing) {
+            saveChanges();
+            editButton.innerText = '수정';
+            toggleFields(false);
+        } else {
+            editButton.innerText = '수정완료';
+            toggleFields(true);
+        }
+    }
+
+    function toggleFields(enable) {
+        var displayStyle = enable ? 'none' : 'block';
+        var inputStyle = enable ? 'block' : 'none';
+
+        document.getElementById('productName').style.display = displayStyle;
+        document.getElementById('productNameInput').style.display = inputStyle;
+        document.getElementById('maxApplicantsText').style.display = displayStyle;
+        document.getElementById('maxApplicantsInput').style.display = inputStyle;
+        document.getElementById('descriptionText').style.display = displayStyle;
+        document.getElementById('descriptionInput').style.display = inputStyle;
+
+        document.getElementById('productNameInput').disabled = !enable;
+        document.getElementById('maxApplicantsInput').disabled = !enable;
+        document.getElementById('descriptionInput').disabled = !enable;
+    }
+
+    function saveChanges() {
+        product.productName = document.getElementById('productNameInput').value;
+        product.maxApplicants = document.getElementById('maxApplicantsInput').value;
+        product.description = document.getElementById('descriptionInput').value;
+
+        fetch('/product/update', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(product)
+        }).then(response => {
+            if (response.ok) {
+                alert('Changes saved successfully!');
+                document.getElementById('productNameText').innerText = product.productName;
+                document.getElementById('maxApplicantsText').innerText = product.maxApplicants;
+                document.getElementById('descriptionText').innerText = product.description;
+            } else {
+                alert('Failed to save changes!');
+            }
+        }).catch(error => {
+            console.error('Error:', error);
+            alert('Failed to save changes!');
+        });
+    }
 </script>
 </th:block>
 </body>

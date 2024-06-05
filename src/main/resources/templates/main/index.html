@@ -20,7 +20,7 @@
                         </div>
                         <!-- End Search Form -->
                         <!-- Start Search Form -->
-                        <div class="search-form wow fadeInUp" data-wow-delay=".7s">
+                        <form action="/product/search" method="GET" class="search-form wow fadeInUp" data-wow-delay=".7s">
                             <div class="row">
                                 <div class="col-lg-4 col-md-4 col-12 p-0">
                                     <div class="search-input">
@@ -32,13 +32,13 @@
                                     <div class="search-input">
                                         <label for="category"><i class="lni lni-grid-alt theme-color"></i></label>
                                         <select name="category" id="category">
-                                            <option value="none" selected disabled>Categories</option>
-                                            <option value="none">여행</option>
-                                            <option value="none">문화</option>
-                                            <option value="none">맛집</option>
-                                            <option value="none">뷰티</option>
-                                            <option value="none">식품</option>
-                                            <option value="none">생활</option>
+                                            <option value="" selected disabled>Categories</option>
+                                            <option value="여행">여행</option>
+                                            <option value="문화">문화</option>
+                                            <option value="맛집">맛집</option>
+                                            <option value="뷰티">뷰티</option>
+                                            <option value="식품">식품</option>
+                                            <option value="생활">생활</option>
                                         </select>
                                     </div>
                                 </div>
@@ -46,23 +46,23 @@
                                     <div class="search-input">
                                         <label for="location"><i class="lni lni-map-marker theme-color"></i></label>
                                         <select name="location" id="location">
-                                            <option value="none" selected disabled>Locations</option>
-                                            <option value="none">서울</option>
-                                            <option value="none">전주</option>
-                                            <option value="none">대전</option>
-                                            <option value="none">군산</option>
-                                            <option value="none">부산</option>
-                                            <option value="none">제주</option>
+                                            <option value="" selected disabled>Locations</option>
+                                            <option value="Seoul">Seoul</option>
+                                            <option value="JeonJu">JeonJu</option>
+                                            <option value="DaeJeon">DaeJeon</option>
+                                            <option value="GunSan">GunSan</option>
+                                            <option value="Busan">Busan</option>
+                                            <option value="Jeju">Jeju</option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="col-lg-2 col-md-2 col-12 p-0">
                                     <div class="search-btn button">
-                                        <button class="btn"><i class="lni lni-search-alt"></i> Search</button>
+                                        <button type="submit" class="btn"><i class="lni lni-search-alt"></i> Search</button>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </form>
                         <!-- End Search Form -->
                     </div>
                 </div>
@@ -77,61 +77,8 @@
             <div class="cat-inner">
                 <div class="row">
                     <div class="col-12 p-0">
-                        <div class="category-slider">
+                        <div class="category-slider" id="category-slider">
                             <!-- Start Single Category -->
-                            <a href="" class="single-cat">
-                                <div class="icon">
-                                    <img src="../../static/assets/images/categories/car.svg" alt="#">
-                                </div>
-                                <h3></h3>
-                                <h5 class="total"></h5>
-                            </a>
-                            <!-- End Single Category -->
-                            <!-- Start Single Category -->
-                            <a href="" class="single-cat">
-                                <div class="icon">
-                                    <img src="../../static/assets/images/categories/laptop.svg" alt="#">
-                                </div>
-                                <h3>문화</h3>
-                                <h5 class="total"></h5>
-                            </a>
-                            <!-- End Single Category -->
-                            <!-- Start Single Category -->
-                            <a href="" class="single-cat">
-                                <div class="icon">
-                                    <img src="../../static/assets/images/categories/matrimony.svg" alt="#">
-                                </div>
-                                <h3>맛집</h3>
-                                <h5 class="total"></h5>
-                            </a>
-                            <!-- End Single Category -->
-                            <!-- Start Single Category -->
-                            <a href="" class="single-cat">
-                                <div class="icon">
-                                    <img src="../../static/assets/images/categories/tshirt.svg" alt="#">
-                                </div>
-                                <h3>뷰티</h3>
-                                <h5 class="total"></h5>
-                            </a>
-                            <!-- End Single Category -->
-
-                            <!-- Start Single Category -->
-                            <a href="" class="single-cat">
-                                <div class="icon">
-                                    <img src="../../static/assets/images/categories/travel.svg" alt="#">
-                                </div>
-                                <h3>식품</h3>
-                                <h5 class="total"></h5>
-                            </a>
-                            <!-- End Single Category -->
-                            <!-- Start Single Category -->
-                            <a href="" class="single-cat">
-                                <div class="icon">
-                                    <img src="../../static/assets/images/categories/watch.svg" alt="#">
-                                </div>
-                                <h3>생활</h3>
-                                <h5 class="total"></h5>
-                            </a>
                             <!-- End Single Category -->
                         </div>
                     </div>
@@ -154,33 +101,33 @@
             </div>
             <div class="single-head">
                 <div class="row">
-                    <div class="col-lg-4 col-md-6 col-12">
+                    <div class="col-lg-4 col-md-6 col-12" th:each="product : ${products}">
                         <!-- Start Single Grid -->
                         <div class="single-grid wow fadeInUp" data-wow-delay=".2s">
                             <div class="image">
-                                <a href="item-details.html" class="thumbnail"><img src="../../static/assets/images/items-grid/img7.jpg" alt="#"></a>
+                                <a th:href="@{'/product/trialDetail/' + ${product.id}}" class="thumbnail"><img th:src="@{/uploads/{image}(image=${product.image})}" alt="Product Image"></a>
                                 <div class="author">
                                     <div class="author-image">
-                                        <a href="javascript:void(0)"><img src="../../static/assets/images/items-grid/author-1.jpg" alt="#">
-                                            <span>고흑</span></a>
+                                        <a href="javascript:void(0)">
+                                            <span th:text="${product.sellerName}"></span></a>
                                     </div>
-                                    <p class="sale">리뷰 작성</p>
+                                    <p class="sale" th:text="${product.activityType}"></p>
                                 </div>
                             </div>
                             <div class="content">
                                 <div class="top-content">
-                                    <a href="javascript:void(0)" class="tag">맛집</a>
+                                    <a href="javascript:void(0)" class="tag" th:text="${product.categoryName}"></a>
                                     <h3 class="title">
-                                        <a href="item-details.html">제주 흑돼지</a>
+                                        <a href="/product/detail" th:text="${product.productName}"></a>
                                     </h3>
 
                                     <ul class="info-list">
-                                        <li><a href="javascript:void(0)"><i class="lni lni-map-marker"></i> 제주 </a></li>
-                                        <li><a href="javascript:void(0)"><i class="lni lni-timer"></i> 12/30, 2023</a></li>
+                                        <li><a href="javascript:void(0)"><i class="lni lni-map-marker" th:text="${product.location}"></i> </a></li>
+                                        <li><a href="javascript:void(0)"><i class="lni lni-timer" th:text="${product.deadlineDate}"></i> </a></li>
                                     </ul>
                                 </div>
                                 <div class="bottom-content">
-                                    <p class="price">신청 250 / 10명</p>
+                                    <p class="price" th:text="'신청: ' + ${product.maxApplicants} + '/' + ' 명'"></p>
                                     <a href="javascript:void(0)" class="like"><i class="lni lni-heart"></i></a>
                                 </div>
                             </div>
@@ -305,92 +252,133 @@
     </a>
 
     <!-- js -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const iconMap = {
+                    '여행': '../../static/assets/images/categories/car.svg',
+                    '문화': '../../static/assets/images/categories/laptop.svg',
+                    '맛집': '../../static/assets/images/categories/matrimony.svg',
+                    '뷰티': '../../static/assets/images/categories/tshirt.svg',
+                    '식품': '../../static/assets/images/categories/travel.svg',
+                    '생활': '../../static/assets/images/categories/watch.svg'
+                };
+            fetch('/product/categories', {
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(categories => {
+                console.log('Categories data:', categories);
+                const categorySlider = document.getElementById('category-slider');
+
+                categories.forEach(category => {
+                    const categoryName = category.name;
+                    const productCount = category.productCount;
+                    const iconSrc = iconMap[categoryName] || '../../static/assets/images/categories/default.svg';
+                    console.log('Processing category:', categoryName, productCount);
+
+                    // Create a new category element
+                    const categoryElement = document.createElement('a');
+                    categoryElement.href = "/product/trialList";
+                    categoryElement.classList.add('single-cat');
+
+                    categoryElement.innerHTML = `
+                        <div class="icon">
+                            <img src="${iconSrc}" alt="#">
+                        </div>
+                        <h3>${categoryName}</h3>
+                        <h5 class="total">${productCount}</h5>
+                    `;
+
+                    // Append the new category element to the slider
+                    categorySlider.appendChild(categoryElement);
+                });
+
+                // Home 페이지에서의 카테고리 클릭 이벤트
+                document.querySelectorAll('.single-cat').forEach(item => {
+                    item.addEventListener('click', function(event) {
+                        event.preventDefault(); // 기본 이벤트(링크 이동) 방지
+
+                        const categoryName = this.querySelector('h3').textContent; // 클릭한 카테고리명
+
+                        // trialList 페이지로 이동하면서 클릭한 카테고리명을 query parameter로 전달
+                        window.location.href = `/product/trialList?category=${categoryName}`;
+                    });
+                });
+
+                // 카테고리 동적으로 추가한 후에 슬라이더 초기화
+                tns({
+                    container: '.category-slider',
+                    items: 3,
+                    slideBy: 'page',
+                    autoplay: false,
+                    mouseDrag: true,
+                    gutter: 0,
+                    nav: false,
+                    controls: true,
+                    controlsText: ['<i class="lni lni-chevron-left"></i>', '<i class="lni lni-chevron-right"></i>'],
+                    responsive: {
+                        0: {
+                            items: 1,
+                        },
+                        540: {
+                            items: 2,
+                        },
+                        768: {
+                            items: 4,
+                        },
+                        992: {
+                            items: 5,
+                        },
+                        1170: {
+                            items: 6,
+                        }
+                    }
+                });
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+
+    <!-- 기존 스크립트 -->
     <script type="text/javascript">
-        //========= Category Slider
-        tns({
-            container: '.category-slider',
-            items: 3,
-            slideBy: 'page',
-            autoplay: false,
-            mouseDrag: true,
-            gutter: 0,
-            nav: false,
-            controls: true,
-            controlsText: ['<i class="lni lni-chevron-left"></i>', '<i class="lni lni-chevron-right"></i>'],
-            responsive: {
-                0: {
-                    items: 1,
-                },
-                540: {
-                    items: 2,
-                },
-                768: {
-                    items: 4,
-                },
-                992: {
-                    items: 5,
-                },
-                1170: {
-                    items: 6,
+        // testimonial slider 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            tns({
+                container: '.testimonial-slider',
+                items: 3,
+                slideBy: 'page',
+                autoplay: false,
+                mouseDrag: true,
+                gutter: 0,
+                nav: true,
+                controls: false,
+                controlsText: ['<i class="lni lni-arrow-left"></i>', '<i class="lni lni-arrow-right"></i>'],
+                responsive: {
+                    0: {
+                        items: 1,
+                    },
+                    540: {
+                        items: 1,
+                    },
+                    768: {
+                        items: 2,
+                    },
+                    992: {
+                        items: 2,
+                    },
+                    1170: {
+                        items: 2,
+                    }
                 }
-            }
-        });
-
-        //========= testimonial
-        tns({
-            container: '.testimonial-slider',
-            items: 3,
-            slideBy: 'page',
-            autoplay: false,
-            mouseDrag: true,
-            gutter: 0,
-            nav: true,
-            controls: false,
-            controlsText: ['<i class="lni lni-arrow-left"></i>', '<i class="lni lni-arrow-right"></i>'],
-            responsive: {
-                0: {
-                    items: 1,
-                },
-                540: {
-                    items: 1,
-                },
-                768: {
-                    items: 2,
-                },
-                992: {
-                    items: 2,
-                },
-                1170: {
-                    items: 2,
-                }
-            }
-        });
-
-// 카테고리
-    document.addEventListener('DOMContentLoaded', function() {
-        fetch('/product/categories', {
-            headers: {
-                'Accept': 'application/json'
-            }
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(categories => {
-            console.log(categories);
-            categories.forEach(category => {
-                const categoryName = category.name;
-                const productCount = category.productCount;
-                const categoryElement = document.querySelector(`.single-cat h3:contains('${categoryName}')`);
-                const totalElement = categoryElement.nextElementSibling;
-                totalElement.textContent = productCount;
             });
-        })
-        .catch(error => console.error(error));
-    });
+        });
     </script>
 </th:block>
 </body>

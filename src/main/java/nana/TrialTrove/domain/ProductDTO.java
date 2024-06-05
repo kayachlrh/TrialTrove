@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.beans.ConstructorProperties;
 import java.time.LocalDate;
 
 @Getter
@@ -30,11 +31,16 @@ public class ProductDTO {
     private MultipartFile imageFile; // 업로드된 이미지 파일
 
     // 체험 목록
-    public ProductDTO(String productName, String image, String location, int maxApplicants, String activityType, String categoryName) {
+    @ConstructorProperties({"id", "productName", "image", "sellerName", "location", "deadlineDate", "maxApplicants", "activityType", "categoryName", "description"})
+    public ProductDTO(Long id, String productName, String image, String sellerName, String location, LocalDate deadlineDate, int maxApplicants, String description, String activityType, String categoryName) {
+        this.id = id;
         this.productName = productName;
         this.image = image;
+        this.sellerName = sellerName;
         this.location = location;
+        this.deadlineDate = deadlineDate;
         this.maxApplicants = maxApplicants;
+        this.description = description;
         this.activityType = activityType;
         this.categoryName = categoryName;
     }

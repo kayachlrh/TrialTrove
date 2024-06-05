@@ -104,21 +104,20 @@
                         <!-- Start Single Item -->
                         <div class="single-item-grid">
                           <div class="image">
-                            <a href="/product/detail"><img th:src="@{/uploads/{image}(image=${product.image})}" alt="Product Image"></a>
+                            <a th:href="@{/product/trialDetail/{id}(id=${product.id})}"><img th:src="@{/uploads/{image}(image=${product.image})}" alt="Product Image"></a>
                             <i class=" cross-badge lni lni-bolt"></i>
                             <span class="flat-badge sale" th:text="${product.activityType}"></span>
                           </div>
                           <div class="content">
                             <a href="javascript:void(0)" class="tag" th:text="${product.categoryName}"></a>
                             <h3 class="title">
-                              <a href="/product/detail" th:text="${product.productName}"></a>
+                              <a th:href="@{'/product/trialDetail/' + ${product.id}}" th:text="${product.productName}"></a>
                             </h3>
                             <p class="location"><a href="javascript:void(0)"><i class="lni lni-map-marker">
                             </i><span th:text="${product.location}"></span></a></p>
                             <ul class="info">
                               <li class="price" th:text="'모집인원: ' + ${product.maxApplicants}"></li>
-                              <li class="like"><a href="javascript:void(0)"><i
-                                      class="lni lni-heart"></i></a>
+                              <li class="like"><a href="javascript:void(0)"><i class="lni lni-heart"></i></a>
                               </li>
                             </ul>
                           </div>

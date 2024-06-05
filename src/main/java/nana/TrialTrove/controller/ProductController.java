@@ -50,6 +50,7 @@ public class ProductController {
         return "product/enroll";
     }
 
+    // 체험 등록
     @PostMapping("/enroll")
     public String enrollProduct(@ModelAttribute ProductDTO productDTO, Principal principal, @RequestParam("imageFile") MultipartFile imageFile) {
 
@@ -89,52 +90,74 @@ public class ProductController {
     }
 
 
-    @GetMapping("/trialDetail")
-    public String showDetailPage(Model model) {
-        model.addAttribute("products", productService.getAllProducts());
+    // 체험 디테일
+    @GetMapping("/trialDetail/{id}")
+    public String productDetail(@PathVariable("id") Long id, Model model) {
+        ProductDTO product = productService.getProductById(id);
+        model.addAttribute("product", product);
         return "product/trialDetail";
     }
 
+    // 체험 목록
     @GetMapping("/trialList")
     public String trialListPage(@RequestParam(value = "page", defaultValue = "0") int page,
                                 @RequestParam(value = "category", required = false) String category,
                                 @RequestParam(value = "search", required = false) String search,
                                 Model model) {
         int pageSize = 6; // 한 페이지당 6개 제품 표시
-        Page<ProductEntity> productPage;
+        Page<ProductDTO> productPage = productService.getProducts(page, pageSize, category, search);
 
-        if (search != null && !search.isEmpty()) {
-            // 검색어가 있는 경우
-            productPage = productService.searchProductsByName(search, PageRequest.of(page, pageSize));
-        } else if (category != null && !category.isEmpty()) {
-            // 카테고리가 있는 경우
-            productPage = productService.getProductsByCategory(category, PageRequest.of(page, pageSize));
-        } else {
-            // 검색어와 카테고리 모두 없는 경우
-            productPage = productService.getProducts(PageRequest.of(page, pageSize));
-        }
-
-        List<ProductDTO> productDTOs = productPage.getContent().stream()
-                .map(product -> new ProductDTO(
-                        product.getProductName(),
-                        product.getImage(),
-                        product.getLocation(),
-                        product.getMaxApplicants(),
-                        product.getActivityType(),
-                        product.getCategory().getName()
-                ))
-                .collect(Collectors.toList());
-
-        model.addAttribute("products", productDTOs);
+        model.addAttribute("products", productPage.getContent());
         model.addAttribute("currentPage", productPage.getNumber());
         model.addAttribute("totalPages", productPage.getTotalPages());
 
         return "product/trialList";
     }
 
+    // 카테고리
     @GetMapping("/categories")
     @ResponseBody
     public List<CategoryDTO> getCategoriesForTrialList() {
         return productService.getAllCategoriesWithProductCount();
     }
+
+
+    // 검색
+    @GetMapping("/search")
+    public String searchProducts(@RequestParam(value = "keyword", required = false) String keyword,
+                                 @RequestParam(value = "category", required = false) String category,
+                                 @RequestParam(value = "location", required = false) String location,
+                                 Model model) {
+        // 검색 조건이 모두 비어 있는 경우 404 페이지로 리다이렉트
+        if ((keyword == null || keyword.isEmpty()) &&
+                (category == null || category.isEmpty()) &&
+                (location == null || location.isEmpty())) {
+            return "redirect:/error/404";
+        }
+
+        List<ProductDTO> products = productService.searchProducts(keyword, category, location);
+
+        if (products.isEmpty()) {
+            // 검색 결과가 없는 경우 404 오류 페이지로 리다이렉트
+            return "redirect:/error/404";
+        }
+
+        if (keyword != null && !keyword.isEmpty()) {
+            // 검색어가 있을 때
+            if (products.size() == 1) {
+                // 검색 결과가 한 개인 경우 해당 상품의 디테일 페이지로 리다이렉트
+                return "redirect:/product/trialDetail/" + products.get(0).getId();
+            } else {
+                // 여러 개의 결과가 있는 경우 목록 페이지로 리다이렉트
+                model.addAttribute("products", products);
+                return "product/trialList";
+            }
+        } else {
+            // 검색어가 없을 때 (카테고리 또는 위치만으로 검색)
+            model.addAttribute("products", products);
+            return "product/trialList";
+        }
+    }
 }
+
+

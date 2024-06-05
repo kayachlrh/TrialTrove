@@ -6,11 +6,14 @@ import nana.TrialTrove.repository.MemberRepository;
 import nana.TrialTrove.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
@@ -83,5 +86,83 @@ public class ProductService {
         return categoryDTOs;
     }
 
+    // 체험 목록
+    public Page<ProductDTO> getProducts(int page, int size, String category, String search) {
+        Page<ProductEntity> productPage;
+        PageRequest pageRequest = PageRequest.of(page, size);
+
+        if (search != null && !search.isEmpty()) {
+            productPage = productRepository.findByProductName(search, pageRequest);
+        } else if (category != null && !category.isEmpty()) {
+            productPage = productRepository.findByCategory_Name(category, pageRequest);
+        } else {
+            productPage = productRepository.findAll(pageRequest);
+        }
+
+        return productPage.map(product -> new ProductDTO(
+                product.getId(),
+                product.getProductName(),
+                product.getImage(),
+                product.getSellerName(),
+                product.getLocation(),
+                product.getDeadlineDate(),
+                product.getMaxApplicants(),
+                product.getDescription(),
+                product.getActivityType(),
+                product.getCategory().getName()
+        ));
+    }
+
+
+    // 체험 디테일
+    public ProductDTO getProductById(Long id) {
+        Optional<ProductEntity> productEntityOpt = productRepository.findById(id);
+        if (productEntityOpt.isPresent()) {
+            ProductEntity productEntity = productEntityOpt.get();
+            return new ProductDTO(
+                    productEntity.getId(),
+                    productEntity.getProductName(),
+                    productEntity.getImage(),
+                    productEntity.getSellerName(),
+                    productEntity.getLocation(),
+                    productEntity.getDeadlineDate(),
+                    productEntity.getMaxApplicants(),
+                    productEntity.getDescription(),
+                    productEntity.getActivityType(),
+                    productEntity.getCategory().getName()
+            );
+        } else {
+            throw new RuntimeException("Product not found with id: " + id); // 예외처리
+        }
+    }
+
+    // 검색
+    public List<ProductDTO> searchProducts(String keyword, String category, String location) {
+        // 모든 조건이 비어 있는 경우 빈 리스트 반환
+        if ((keyword == null || keyword.isEmpty()) &&
+                (category == null || category.isEmpty()) &&
+                (location == null || location.isEmpty())) {
+            return new ArrayList<>();
+        }
+
+        // 조건이 모두 비어 있지 않은 경우 검색
+        List<ProductEntity> products = productRepository.findByKeywordCategoryLocation(keyword, category, location);
+
+        // entities를 DTO로 변환
+        return products.stream()
+                .map(product -> new ProductDTO(
+                        product.getId(),
+                        product.getProductName(),
+                        product.getImage(),
+                        product.getSellerName(),
+                        product.getLocation(),
+                        product.getDeadlineDate(),
+                        product.getMaxApplicants(),
+                        product.getDescription(),
+                        product.getActivityType(),
+                        product.getCategory().getName()
+                ))
+                .collect(Collectors.toList());
+    }
 
 }
