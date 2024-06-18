@@ -1,15 +1,20 @@
 package nana.TrialTrove.service;
 
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import nana.TrialTrove.domain.*;
+import nana.TrialTrove.repository.ApplicationRepository;
 import nana.TrialTrove.repository.CategoryRepository;
 import nana.TrialTrove.repository.MemberRepository;
 import nana.TrialTrove.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -20,14 +25,15 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
     private final MemberRepository memberRepository;
+    private final ApplicationRepository applicationRepository;
 
     @Autowired
-    public ProductService(ProductRepository productRepository, CategoryRepository categoryRepository, MemberRepository memberRepository) {
+    public ProductService(ProductRepository productRepository, CategoryRepository categoryRepository, MemberRepository memberRepository, ApplicationRepository applicationRepository) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.memberRepository = memberRepository;
+        this.applicationRepository = applicationRepository;
     }
-
 
 
     // 모든 상품 조회
@@ -47,6 +53,10 @@ public class ProductService {
         return productRepository.findByProductName(productName, pageable);
     }
 
+    // 관심 체험 목록
+
+
+    @Transactional
     public void enrollProduct(ProductDTO productDTO, MemberEntity member) {
 
 
@@ -106,6 +116,7 @@ public class ProductService {
                 product.getSellerName(),
                 product.getLocation(),
                 product.getDeadlineDate(),
+                product.getApplicants(),
                 product.getMaxApplicants(),
                 product.getDescription(),
                 product.getActivityType(),
@@ -126,6 +137,7 @@ public class ProductService {
                     productEntity.getSellerName(),
                     productEntity.getLocation(),
                     productEntity.getDeadlineDate(),
+                    productEntity.getApplicants(),
                     productEntity.getMaxApplicants(),
                     productEntity.getDescription(),
                     productEntity.getActivityType(),
@@ -157,6 +169,7 @@ public class ProductService {
                         product.getSellerName(),
                         product.getLocation(),
                         product.getDeadlineDate(),
+                        product.getApplicants(),
                         product.getMaxApplicants(),
                         product.getDescription(),
                         product.getActivityType(),
@@ -165,4 +178,135 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
+    //체험 디테일 수정
+    @Transactional
+    public void updateProduct(ProductDTO productDTO) {
+        // Convert DTO to Entity if necessary
+        Optional<ProductEntity> optionalProduct = productRepository.findById(productDTO.getId());
+        if (optionalProduct.isPresent()) {
+            ProductEntity product = optionalProduct.get();
+            product.setProductName(productDTO.getProductName());
+            product.setDescription(productDTO.getDescription());
+            product.setMaxApplicants(productDTO.getMaxApplicants());
+            productRepository.save(product);
+        } else {
+            throw new IllegalArgumentException("Product not found with id: " + productDTO.getId());
+        }
+    }
+
+    //체험 삭제
+    @Transactional
+    public void deleteProduct(Long id) {
+        productRepository.deleteById(id);
+    }
+
+    //체험 관심목록
+    @Transactional
+    public void addFavorite(Long productId, String username) {
+        MemberEntity member = memberRepository.findByUserId(username)
+                .orElseThrow(() -> new RuntimeException("Member not found"));
+        ProductEntity product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        if (member.getFavorites().contains(product)) {
+            throw new RuntimeException("Product already added to favorites");
+        }
+
+        member.getFavorites().add(product);
+        memberRepository.save(member);
+    }
+
+
+    public List<FavoriteDTO> getFavorites(String username) {
+        MemberEntity member = memberRepository.findByUserId(username)
+                .orElseThrow(() -> new RuntimeException("Member not found"));
+        return member.getFavorites().stream().map(product -> {
+            FavoriteDTO dto = new FavoriteDTO();
+            dto.setProductId(product.getId());
+            dto.setProductName(product.getProductName());
+            dto.setCategoryName(product.getCategory().getName());
+            dto.setLocation(product.getLocation());
+            dto.setImage(product.getImage());
+            return dto;
+        }).collect(Collectors.toList());
+    }
+
+    // 페이지네이션된 관심 목록 가져오기
+    public Page<FavoriteDTO> getFavorites(String username, Pageable pageable) {
+        MemberEntity member = memberRepository.findByUserId(username)
+                .orElseThrow(() -> new RuntimeException("Member not found"));
+
+        List<ProductEntity> favorites = member.getFavorites();
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), favorites.size());
+
+        List<FavoriteDTO> favoriteDTOs = favorites.subList(start, end).stream().map(product -> {
+            FavoriteDTO dto = new FavoriteDTO();
+            dto.setProductId(product.getId());
+            dto.setProductName(product.getProductName());
+            dto.setCategoryName(product.getCategory().getName());
+            dto.setLocation(product.getLocation());
+            dto.setImage(product.getImage());
+            return dto;
+        }).collect(Collectors.toList());
+
+        return new PageImpl<>(favoriteDTOs, pageable, favorites.size());
+    }
+
+    // 관심 체험 삭제
+    @Transactional
+    public void deleteFavorite(Long productId, String username) {
+        MemberEntity member = memberRepository.findByUserId(username)
+                .orElseThrow(() -> new RuntimeException("Member not found"));
+        ProductEntity product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        member.getFavorites().remove(product);
+        memberRepository.save(member);
+    }
+
+    // 관심 체험 신청
+    @Transactional
+    public ApplicationEntity apply(ApplicationDTO applicationDTO) {
+        // DTO를 엔티티로 변환
+        ApplicationEntity applicationEntity = new ApplicationEntity();
+        applicationEntity.setMember(memberRepository.findById(applicationDTO.getMemberId())
+                .orElseThrow(() -> new IllegalArgumentException("Member not found with id: " + applicationDTO.getMemberId())));
+
+        ProductEntity productEntity = productRepository.findById(applicationDTO.getProductId())
+                .orElseThrow(() -> new IllegalArgumentException("Product not found with id: " + applicationDTO.getProductId()));
+
+
+        applicationEntity.setProduct(productEntity);
+        applicationEntity.setPhone(applicationDTO.getPhone());
+        applicationEntity.setApplicationDate(LocalDateTime.now());
+        applicationEntity.setStatus("접수");
+
+        // 상품 테이블의 신청자 수 업데이트
+        int applicants = productEntity.getApplicants();
+        productEntity.setApplicants(applicants + 1); // 현재 신청자 수에 1 추가
+        productRepository.save(productEntity);
+
+        // 신청 정보 저장
+        return applicationRepository.save(applicationEntity);
+    }
+
+    // 체험 신청 중복 확인
+    public boolean checkIfAlreadyApplied(Long memberId, Long productId) {
+        // 회원 ID와 상품 ID를 이용하여 이미 신청한 기록이 있는지 확인
+        Optional<MemberEntity> member = memberRepository.findById(memberId);
+        Optional<ProductEntity> product = productRepository.findById(productId);
+
+        if (member.isPresent() && product.isPresent()) {
+            Optional<ApplicationEntity> application = applicationRepository.findByProductAndMember(
+                    product.get(),
+                    member.get()
+            );
+            return application.isPresent();
+        } else {
+            return false; // 회원이나 상품이 존재하지 않는 경우 처리 방법을 설정할 수 있음
+        }
+    }
 }
+
+

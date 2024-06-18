@@ -1,8 +1,12 @@
 package nana.TrialTrove.config;
 
+import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import nana.TrialTrove.service.CustomOAuth2UserService;
 import nana.TrialTrove.service.MemberDetailsService;
+import org.apache.catalina.security.SecurityConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -32,6 +36,8 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @Configuration
 public class SpringSecurityConfig {
 
+    private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
+
     private final MemberDetailsService memberDetailsService;
     private final CustomOAuth2UserService customOAuth2UserService;
 
@@ -47,10 +53,10 @@ public class SpringSecurityConfig {
         http
                 .authorizeHttpRequests((authorizeRequests) -> {
 
-                    authorizeRequests.requestMatchers("/member/myInfo","/member/updateMyInfo","/board/write","/board/detail")
+                    authorizeRequests.requestMatchers("/member/myInfo","/member/updateMyInfo","/board/write","/board/detail","/product/favorite/**","/product/apply/**")
                             .hasAnyRole("ADMIN", "USER");
 
-                    authorizeRequests.requestMatchers("/board/reply/**","/product/enroll")
+                    authorizeRequests.requestMatchers("/board/reply/**","/product/enroll","/product/update")
                             .hasRole("ADMIN");
                     authorizeRequests.requestMatchers("/uploads/**").permitAll();
                     authorizeRequests.anyRequest().permitAll();
@@ -86,7 +92,6 @@ public class SpringSecurityConfig {
                         .logoutSuccessUrl("/")
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID","remember-me")
-
                 );
 
         return http.build();

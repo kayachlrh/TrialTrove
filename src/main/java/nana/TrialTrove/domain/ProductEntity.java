@@ -1,16 +1,18 @@
 package nana.TrialTrove.domain;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
 @Setter
-@ToString
+@ToString(exclude = {"ownerId", "likedByMembers"})
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "Product")
 public class ProductEntity {
     @Id
@@ -48,5 +50,8 @@ public class ProductEntity {
     @ManyToOne
     @JoinColumn(name = "category_id") // 외래 키 설정
     private CategoryEntity category;
+
+    @ManyToMany(mappedBy = "favorites")
+    private List<MemberEntity> likedByMembers = new ArrayList<>();
 
 }

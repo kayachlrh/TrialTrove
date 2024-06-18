@@ -127,8 +127,14 @@
                                     </ul>
                                 </div>
                                 <div class="bottom-content">
-                                    <p class="price" th:text="'신청: ' + ${product.maxApplicants} + '/' + ' 명'"></p>
-                                    <a href="javascript:void(0)" class="like"><i class="lni lni-heart"></i></a>
+                                    <p class="price" id="product-price-${product.id}"
+                                        th:text="${product.applicants + '/' + product.maxApplicants + '명'}">
+                                    </p>
+                                    <li class="like">
+                                        <a href="javascript:void(0)" th:onclick="'addToFavorites(' + ${product.id} + ')'">
+                                            <i class="lni lni-heart" data-product-id="${product.id}"></i>
+                                        </a>
+                                    </li>
                                 </div>
                             </div>
                         </div>
@@ -344,6 +350,34 @@
             })
             .catch(error => console.error('Error:', error));
         });
+
+
+   // 하트 버튼 관심 체험 추가 (클릭한 상품의 정보를 서버에 보내어 즐겨찾기에 추가하는 함수)
+            function addToFavorites(productId) {
+              console.log('id 값:',productId)
+                // AJAX 요청을 보냅니다.
+                fetch(`/product/favorite/${productId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to add product to favorites');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log(data); // 성공 시 메시지 출력
+                    alert("보물함에 담겼습니다.");
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('이미 추가한 보물 입니다.');
+                });
+            }
+
     </script>
 
     <!-- 기존 스크립트 -->

@@ -49,13 +49,18 @@ public class ContactController {
 
     // 게시글 작성 처리
     @PostMapping("/contact")
-    public String createContact(@Valid ContactDTO contactDTO, BindingResult bindingResult) {
+    public String createContact(@ModelAttribute("contactDTO") @Valid ContactDTO contactDTO, BindingResult bindingResult, Model model) {
+
         if (bindingResult.hasErrors()) {
-            return "/board/write"; // 오류가 있는 폼 페이지로 리다이렉트
+
+            List<FieldError> errors = bindingResult.getFieldErrors();
+            for (FieldError error : errors) {
+                model.addAttribute(error.getField() + "Error", error.getDefaultMessage());
+            }
+            return "board/write";
         } else {
-            // 유효성 검사 통과 시 데이터를 저장하고 목록 페이지로 이동
             ContactDTO createdContactDTO = contactService.createContact(contactDTO);
-            return "redirect:/board/list"; // 게시판 메인 페이지로 리다이렉트
+            return "redirect:/board/list";
         }
     }
 

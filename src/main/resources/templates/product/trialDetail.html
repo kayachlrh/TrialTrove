@@ -32,64 +32,74 @@
     <!-- Start Item Details -->
     <section class="item-details section">
         <div class="container">
-            <div class="top-area">
-                <div class="row">
-                    <div class="col-lg-6 col-md-12 col-12">
-                        <div class="product-images">
-                            <main id="gallery">
-                                <div class="main-img">
-                                    <img th:src="@{/uploads/{image}(image=${product.image})}" id="current" alt="Product Image">
-                                </div>
-                            </main>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-md-12 col-12">
-                        <div class="product-info">
-                            <h2 class="title" th:text="${product.location}"></h2>
-                            <p class="location" th:text="${product.categoryName}"><i class="lni lni-map-marker"></i><a href="javascript:void(0)"></a></p>
-                            <h3 class="price" id="productName" th:text="${product.productName}" ></h3>
-                            <input type="text" id="productNameInput" value="" style="display:none;">
-                            <div class="list-info">
-                                <h4>Informations</h4>
-                                <ul>
-                                    <li><span th:text="${product.sellerName}"></span></li>
-                                    <li><span id="maxApplicants" th:text="${'모집인원: ' + product.maxApplicants}" onclick="updateText('maxApplicants')"></span> </li>
-                                    <li><span th:text="${'모집날짜: ' + product.deadlineDate}"></span> </li>
-                                </ul>
+            <form id="productForm">
+                <input type="hidden" id="productId" name="productId" th:value="${product.id}">
+                <div class="top-area">
+                    <div class="row">
+                        <div class="col-lg-6 col-md-12 col-12">
+                            <div class="product-images">
+                                <main id="gallery">
+                                    <div class="main-img">
+                                        <img th:src="@{/uploads/{image}(image=${product.image})}" id="current" alt="Product Image">
+                                    </div>
+                                </main>
                             </div>
-                            <div class="contact-info">
-                                <ul>
-                                    <li>
-                                        <a class="call">
-                                            <i class="lni lni-alarm" th:text="${product.activityType}"></i>
-                                            <span></span>
-                                        </a>
-                                    </li>
-                                </ul>
+                        </div>
+                        <div class="col-lg-6 col-md-12 col-12">
+                            <div class="product-info">
+                                <h2 class="title" th:text="${product.location}"></h2>
+                                <p class="location" th:text="${product.categoryName}"><i class="lni lni-map-marker"></i><a href="javascript:void(0)"></a></p>
+                                <h3 class="price" id="productName" th:text="${product.productName}" ></h3>
+                                <input type="text" id="productNameInput" name="productName" th:value="${product.productName}"  style="display:none;">
+                                <div class="list-info">
+                                    <h4>Informations</h4>
+                                    <ul>
+                                        <li><span th:text="${product.sellerName}"></span></li>
+                                        <li><span id="maxApplicants" th:text="${'모집인원: ' + product.maxApplicants}"></span>
+                                            <input type="text" id="maxApplicantsInput" name="maxApplicants" th:value="${product.maxApplicants}" style="display:none;"> </li>
+                                        <li><span th:text="${'모집날짜: ' + product.deadlineDate}"></span> </li>
+                                    </ul>
+                                </div>
+                                <div class="contact-info">
+                                    <ul>
+                                        <li>
+                                            <a class="call">
+                                                <i class="lni lni-alarm" th:text="${product.activityType}"></i>
+                                                <span></span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="item-details-blocks">
-                <div class="row">
-                    <div class="col-lg-8 col-md-7 col-12">
-                        <!-- Start Single Block -->
-                        <div class="single-block description">
-                            <h3>Description</h3>
-                            <pre id="description" th:text="${product.description}" onclick="updateText('description')"></pre>
-                        </div>
-                        <!-- End Single Block -->
-                        <!-- Start Single Block -->
-                        <div class="single-block tags">
-                            <h3>Tags</h3>
-                            <ul>
-                                <li><a href="javascript:void(0)">키워드</a></li>
-                                <li><a href="javascript:void(0)">1000자 이상</a></li>
-                                <li><a href="javascript:void(0)">이미지 10장 이상</a></li>
-                            </ul>
-                        </div>
-                        <!-- End Single Block -->
+                <div class="item-details-blocks">
+                    <div class="row">
+                        <div class="col-lg-8 col-md-7 col-12">
+                            <!-- Start Single Block -->
+                            <div class="single-block description">
+                                <h3>Description</h3>
+                                <pre id="description" th:text="${product.description}"></pre>
+                                <textarea id="descriptionInput" name="description" style="display:none;" >[[${product.description}]]</textarea>
+                            </div>
+                            <!-- End Single Block -->
+                            <!-- Start Single Block -->
+                            <div class="single-block tags">
+                                <h3>Tags</h3>
+                                <ul>
+                                    <li><a href="javascript:void(0)">키워드</a></li>
+                                    <li><a href="javascript:void(0)">1000자 이상</a></li>
+                                    <li><a href="javascript:void(0)">이미지 10장 이상</a></li>
+                                </ul>
+                            </div>
+                            <!-- End Single Block -->
+                            <div class="col-12 text-end">
+                                <div class="button">
+                                    <input type="hidden" id="memberId" th:value="${#authentication.principal.username}">
+                                    <a class="btn" th:onclick="checkAndApply([[${product.id}]])" th:text="'신청하기'"></a>
+                                </div>
+                            </div>
 
                             <!-- Start Single Block -->
                             <div class="single-block ">
@@ -119,19 +129,21 @@
                                 </div>
                             </div>
                             <!-- End Single Block -->
-                        <th:block sec:authorize="hasRole('ADMIN')">
-                        <div class="dashboard-sidebar">
-                            <div class="dashboard-menu">
-                                <div class="button">
-                                    <button type="button" class="btn alt-btn" id="editButton" onclick="toggleEdit()">수정</button>
-                                    <a class="btn" href="javascript:void(0)">삭제</a>
+                            <th:block sec:authorize="hasRole('ADMIN')">
+                                <div class="dashboard-sidebar">
+                                    <div class="dashboard-menu">
+                                        <div class="button">
+                                            <button type="button" class="btn alt-btn" id="editButton" onclick="toggleEdit()">수정</button>
+                                            <a class="btn" id="saveButton" style="display:none;" href="javascript:void(0)" onclick="saveChanges()">수정완료</a>
+                                            <a class="btn" href="javascript:void(0)" th:attr="onclick='deleteProduct(' + ${product.id} + ')'">삭제</a>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
+                            </th:block>
                         </div>
-                        </th:block>
                     </div>
                 </div>
-            </div>
+            </form>
         </div>
     </section>
     <!-- End Item Details -->
@@ -143,72 +155,133 @@
     </a>
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script>
-    const product = {
-        id: [[${product.id}]],
-        productName: [[${#strings.escapeJavaScript(product.productName)}]],
-        maxApplicants: [[${product.maxApplicants}]],
-        description: [[${#strings.escapeJavaScript(product.description)}]]
-    };
-
-    document.getElementById('productNameInput').value = product.productName;
-    document.getElementById('maxApplicantsInput').value = product.maxApplicants;
-    document.getElementById('descriptionInput').value = product.description;
 
     function toggleEdit() {
-        var editButton = document.getElementById('editButton');
-        var isEditing = editButton.innerText === '수정완료';
+    const editButton = document.getElementById('editButton');
+    const saveButton = document.getElementById('saveButton');
 
-        if (isEditing) {
-            saveChanges();
-            editButton.innerText = '수정';
-            toggleFields(false);
+    const productName = document.getElementById('productName');
+    const productNameInput = document.getElementById('productNameInput');
+
+    const description = document.getElementById('description');
+    const descriptionInput = document.getElementById('descriptionInput');
+
+    const maxApplicants = document.getElementById('maxApplicants');
+    const maxApplicantsInput = document.getElementById('maxApplicantsInput');
+
+    if (editButton && saveButton && productName && productNameInput && description && descriptionInput && maxApplicants && maxApplicantsInput) {
+        editButton.style.display = 'none';
+        saveButton.style.display = 'inline-block';
+
+        productName.style.display = 'none';
+        productNameInput.style.display = 'inline-block';
+        productNameInput.value = productName.textContent;
+
+        description.style.display = 'none';
+        descriptionInput.style.display = 'inline-block';
+        descriptionInput.value = description.textContent;
+
+        maxApplicants.style.display = 'none';
+        maxApplicantsInput.style.display = 'inline-block';
+        maxApplicantsInput.value = maxApplicants.textContent.replace('모집인원: ', '');
+    } else {
+        console.error('One or more elements could not be found.');
+    }
+}
+
+function saveChanges() {
+    const form = document.getElementById('productForm');
+    const formData = new FormData(form);
+
+    console.log('FormData:', formData);
+
+    fetch(`/product/update/${formData.get('productId')}`, {
+        method: 'POST',
+        headers: {
+<!--        'Content-Type': 'multipart/form-data'-->
+    },
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Server response:', data);
+        if (data.success) {
+            document.getElementById('productName').textContent = formData.get('productName');
+            document.getElementById('description').textContent = formData.get('description');
+            document.getElementById('maxApplicants').textContent = '모집인원: ' + formData.get('maxApplicants');
+
+            const editButton = document.getElementById('editButton');
+            const saveButton = document.getElementById('saveButton');
+
+            editButton.style.display = 'inline-block';
+            saveButton.style.display = 'none';
+
+            document.getElementById('productName').style.display = 'inline-block';
+            document.getElementById('productNameInput').style.display = 'none';
+
+            document.getElementById('description').style.display = 'inline-block';
+            document.getElementById('descriptionInput').style.display = 'none';
+
+            document.getElementById('maxApplicants').style.display = 'inline-block';
+            document.getElementById('maxApplicantsInput').style.display = 'none';
         } else {
-            editButton.innerText = '수정완료';
-            toggleFields(true);
+            console.error('Server response error:', data);
+            alert('변경 사항을 저장하는 중에 오류가 발생했습니다.');
         }
-    }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('변경 사항을 저장하는 중 오류가 발생했습니다.');
+    });
+}
 
-    function toggleFields(enable) {
-        var displayStyle = enable ? 'none' : 'block';
-        var inputStyle = enable ? 'block' : 'none';
-
-        document.getElementById('productName').style.display = displayStyle;
-        document.getElementById('productNameInput').style.display = inputStyle;
-        document.getElementById('maxApplicantsText').style.display = displayStyle;
-        document.getElementById('maxApplicantsInput').style.display = inputStyle;
-        document.getElementById('descriptionText').style.display = displayStyle;
-        document.getElementById('descriptionInput').style.display = inputStyle;
-
-        document.getElementById('productNameInput').disabled = !enable;
-        document.getElementById('maxApplicantsInput').disabled = !enable;
-        document.getElementById('descriptionInput').disabled = !enable;
-    }
-
-    function saveChanges() {
-        product.productName = document.getElementById('productNameInput').value;
-        product.maxApplicants = document.getElementById('maxApplicantsInput').value;
-        product.description = document.getElementById('descriptionInput').value;
-
-        fetch('/product/update', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(product)
-        }).then(response => {
+// 상품 삭제
+    function deleteProduct(id) {
+    if (confirm("정말로 이 상품을 삭제하시겠습니까?")) {
+        fetch(`/product/delete/${id}`, {
+            method: 'DELETE'
+        })
+        .then(response => {
             if (response.ok) {
-                alert('Changes saved successfully!');
-                document.getElementById('productNameText').innerText = product.productName;
-                document.getElementById('maxApplicantsText').innerText = product.maxApplicants;
-                document.getElementById('descriptionText').innerText = product.description;
+                alert("상품이 성공적으로 삭제되었습니다.");
+                window.location.href = '/product/trialList';
+                // 삭제된 상품을 화면에서 제거하거나 새로고침 등의 동작 수행
             } else {
-                alert('Failed to save changes!');
+                alert("상품 삭제 중 오류가 발생했습니다.");
             }
-        }).catch(error => {
+        })
+        .catch(error => {
             console.error('Error:', error);
-            alert('Failed to save changes!');
+            alert('상품 삭제 중 오류가 발생했습니다.');
         });
     }
+}
+
+// 체험 상품 신청
+    function checkAndApply(productId) {
+    // Ajax 요청을 통해 서버에 이미 신청 여부를 확인
+    $.ajax({
+        type: 'GET',
+        url: '/product/check-application/' + productId,
+        success: function(response) {
+            if (response === "Already applied") {
+                // 이미 신청한 경우 알림창 표시
+                alert('이미 신청한 체험입니다.');
+            } else {
+                // 신청 가능한 경우 신청 페이지로 이동
+                apply(productId);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('오류 발생:', xhr.status, xhr.responseText);
+            alert('서버 오류가 발생했습니다. 다시 시도해주세요.');
+        }
+    });
+}
+
+function apply(productId) {
+    window.location.href = '/product/apply/' + productId;
+}
 </script>
 </th:block>
 </body>
