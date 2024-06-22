@@ -7,11 +7,10 @@ import nana.TrialTrove.repository.ApplicationRepository;
 import nana.TrialTrove.repository.CategoryRepository;
 import nana.TrialTrove.repository.MemberRepository;
 import nana.TrialTrove.repository.ProductRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -22,10 +21,13 @@ import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
+
+    private static final Logger logger = LoggerFactory.getLogger(ProductService.class);
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
     private final MemberRepository memberRepository;
     private final ApplicationRepository applicationRepository;
+
 
     @Autowired
     public ProductService(ProductRepository productRepository, CategoryRepository categoryRepository, MemberRepository memberRepository, ApplicationRepository applicationRepository) {
@@ -53,7 +55,32 @@ public class ProductService {
         return productRepository.findByProductName(productName, pageable);
     }
 
-    // 관심 체험 목록
+
+
+
+    // 관리자 대시보드: 모든 신청 정보와 관련된 상품 정보를 가져옴
+    public Page<AdminDashboardDTO> getAllApplicationsWithProductInfo(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("applicationDate").descending());
+        Page<ApplicationEntity> applicationPage = applicationRepository.findAll(pageable);
+
+        List<AdminDashboardDTO> dashboardDTOs = applicationPage.getContent().stream().map(application -> {
+            ProductEntity product = application.getProduct();
+            MemberEntity member = application.getMember();
+            String userId = member.getUserId();
+
+            return new AdminDashboardDTO(
+                    product.getProductName(),
+                    application.getApplicationDate(),
+                    product.getDeadlineDate(),
+                    application.getStatus(),
+                    product.getId(),
+                    application.getId(),
+                    userId
+            );
+        }).collect(Collectors.toList());
+
+        return new PageImpl<>(dashboardDTOs, pageable, applicationPage.getTotalElements());
+    }
 
 
     @Transactional
@@ -217,21 +244,6 @@ public class ProductService {
     }
 
 
-    public List<FavoriteDTO> getFavorites(String username) {
-        MemberEntity member = memberRepository.findByUserId(username)
-                .orElseThrow(() -> new RuntimeException("Member not found"));
-        return member.getFavorites().stream().map(product -> {
-            FavoriteDTO dto = new FavoriteDTO();
-            dto.setProductId(product.getId());
-            dto.setProductName(product.getProductName());
-            dto.setCategoryName(product.getCategory().getName());
-            dto.setLocation(product.getLocation());
-            dto.setImage(product.getImage());
-            return dto;
-        }).collect(Collectors.toList());
-    }
-
-    // 페이지네이션된 관심 목록 가져오기
     public Page<FavoriteDTO> getFavorites(String username, Pageable pageable) {
         MemberEntity member = memberRepository.findByUserId(username)
                 .orElseThrow(() -> new RuntimeException("Member not found"));
@@ -252,6 +264,7 @@ public class ProductService {
 
         return new PageImpl<>(favoriteDTOs, pageable, favorites.size());
     }
+
 
     // 관심 체험 삭제
     @Transactional
@@ -306,6 +319,42 @@ public class ProductService {
         } else {
             return false; // 회원이나 상품이 존재하지 않는 경우 처리 방법을 설정할 수 있음
         }
+    }
+
+    // 신청자 관리
+    public void updateStatus(Long id, String newStatus) {
+        ApplicationEntity application = applicationRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Application not found"));
+        application.setStatus(newStatus);
+        applicationRepository.save(application);
+    }
+
+    // 신청 삭제
+    public void deleteApplication(Long id) {
+        applicationRepository.deleteById(id);
+    }
+
+    // 신청 현황
+    public Page<ApplicationProductDTO> getMemberApplications(Long memberId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("applicationDate").descending());
+        Page<ApplicationEntity> applicationPage = applicationRepository.findByMemberId(memberId, pageable);
+
+        List<ApplicationProductDTO> dtoList = applicationPage.getContent().stream().map(application -> {
+            ProductEntity product = application.getProduct();
+
+
+            ApplicationProductDTO dto = new ApplicationProductDTO();
+            dto.setId(application.getId());
+            dto.setImage(product.getImage());
+            dto.setProductName(product.getProductName());
+            dto.setSellerName(product.getSellerName());
+            dto.setLocation(product.getLocation());
+            dto.setApplicationDate(application.getApplicationDate().toLocalDate());
+
+            return dto;
+        }).collect(Collectors.toList());
+
+        return new PageImpl<>(dtoList, pageable, applicationPage.getTotalElements());
     }
 }
 

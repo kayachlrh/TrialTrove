@@ -27,4 +27,7 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
     List<ProductEntity> findByKeywordCategoryLocation(@Param("keyword") String keyword,
                                                       @Param("category") String category,
                                                       @Param("location") String location);
+
+    @Query("SELECT p FROM ProductEntity p JOIN ApplicationEntity a ON p.id = a.product.id WHERE a.member.id = :memberId")
+    List<ProductEntity> findByMemberId(@Param("memberId") Long memberId);
 }

@@ -20,7 +20,7 @@
                 </div>
                 <div class="col-lg-6 col-md-6 col-12">
                     <ul class="breadcrumb-nav">
-                        <li><a href="../main/index.html">Home</a></li>
+                        <li><a href="/">Home</a></li>
                         <li>Trail Detail</li>
                     </ul>
                 </div>
@@ -32,7 +32,7 @@
     <!-- Start Item Details -->
     <section class="item-details section">
         <div class="container">
-            <form th:object="${applicationDTO}" th:action="@{/product/apply/{productId}(productId=${productId})}" method="POST" class="profile-setting-form">
+            <form th:object="${applicationDTO}" th:action="@{/apply/{productId}(productId=${productId})}" method="POST" class="profile-setting-form">
                 <div class="top-area">
                     <div class="row">
                         <div class="col-lg-8 col-md-7 col-12">

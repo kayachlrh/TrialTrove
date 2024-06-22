@@ -202,18 +202,28 @@ public class ProductController {
     // 체험 관심목록
 
     @GetMapping("/favorite")
-    public String favoritePage(@RequestParam(value = "page", defaultValue = "0") int page, Model model) {
-        int pageSize = 5;
-        Pageable pageable = PageRequest.of(page, pageSize);
+    public String getFavorites(@RequestParam(value = "page", defaultValue = "0") int page,
+                               @RequestParam(value = "size", defaultValue = "5") int size,
+                               Model model) {
+        // 현재 로그인한 사용자 가져오기
+        MemberDTO currentUser = memberService.getCurrentUser();
+        if (currentUser == null) {
+            // 로그인하지 않은 경우 로그인 페이지로 리다이렉트
+            return "redirect:/login";
+        }
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
+        String username = currentUser.getUserId();
+        Pageable pageable = PageRequest.of(page, size);
 
+        // 페이지네이션된 관심 목록 가져오기
         Page<FavoriteDTO> favoritePage = productService.getFavorites(username, pageable);
 
+        // 모델에 추가
         model.addAttribute("favoritePage", favoritePage);
+        model.addAttribute("currentUser", currentUser);
         return "product/favorite";
     }
+
 
     @PostMapping("/favorite/{productId}")
     public ResponseEntity<Map<String, String>> addFavorite(@PathVariable("productId") Long productId) {
@@ -224,15 +234,6 @@ public class ProductController {
         return ResponseEntity.ok().body(Map.of("message", "Product added to favorites"));
     }
 
-    // 관심체험 목록 가져오기
-    @GetMapping("/favorites")
-    public ResponseEntity<List<FavoriteDTO>> getFavorites() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-
-        List<FavoriteDTO> favorites = productService.getFavorites(username);
-        return ResponseEntity.ok(favorites);
-    }
 
     // 관심 체험 삭제
     @DeleteMapping("/favorite/{productId}")
@@ -327,12 +328,6 @@ public class ProductController {
         }
     }
 
-    // 체험 신청자 업데이트
-//    @GetMapping("/product/{productId}/applicants")
-//    public ResponseEntity<Integer> getProductApplicants(@PathVariable("productId") Long productId) {
-//        int currentApplicants = productService.getCurrentApplicants(productId);
-//        return ResponseEntity.ok().body(currentApplicants);
-//    }
 }
 
 

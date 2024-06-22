@@ -58,7 +58,7 @@ public class SpringSecurityConfig {
 
                     authorizeRequests.requestMatchers("/board/reply/**","/product/enroll","/product/update")
                             .hasRole("ADMIN");
-                    authorizeRequests.requestMatchers("/uploads/**").permitAll();
+                    authorizeRequests.requestMatchers("/uploads/**","/product/trialDetail/**").permitAll();
                     authorizeRequests.anyRequest().permitAll();
                 })
                 .formLogin((formLogin) -> {
@@ -71,7 +71,7 @@ public class SpringSecurityConfig {
                 .csrf(csrf -> csrf
                 //.csrfTokenRequestHandler()
                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                .ignoringRequestMatchers("/", "/member/**", "/board/**", "/product/**")
+                .ignoringRequestMatchers("/", "/member/**", "/board/**", "/product/**", "/admin/**")
         );
         http
                 .sessionManagement((sessionManagement) ->

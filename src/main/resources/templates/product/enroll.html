@@ -41,15 +41,19 @@
                         </h3>
                         <div class="dashboard-menu">
                             <ul>
-                                <li><a href="dashboard.html"><i class="lni lni-dashboard"></i> Dashboard</a></li>
                                 <li><a href="/member/myInfo"><i class="lni lni-pencil-alt"></i>
                                     내 정보 </a></li>
-                                <li><a href="../trial/favorite"><i class="lni lni-heart"></i> 보물함 </a></li>
+                                <li><a href="/product/favorite"><i class="lni lni-heart"></i> 보물함 </a></li>
                                 <li><a href="../trial/apply"><i class="lni lni-bookmark"></i> 보물지도 </a></li>
 
-                                <!-- 관리자 상품등록 -->
+                                <!-- 관리자 체험등록 링크 -->
                                 <li th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">
                                     <a class="active" href="../product/enroll"><i class="lni lni-circle-plus"></i> 체험등록 </a>
+                                </li>
+
+                                <!-- 관리자 대시보드 링크 -->
+                                <li th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">
+                                    <a href="/admin/dashboard"><i class="lni lni-dashboard"></i> Dashboard</a>
                                 </li>
 
                                 <li><a href="/member/delete"><i class="lni lni-trash"></i> 회원탈퇴 </a></li>

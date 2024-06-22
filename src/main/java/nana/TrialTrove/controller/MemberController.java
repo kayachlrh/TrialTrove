@@ -5,13 +5,15 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import nana.TrialTrove.domain.MemberDTO;
-import nana.TrialTrove.domain.MemberEntity;
-import nana.TrialTrove.domain.PasswordForm;
+import nana.TrialTrove.domain.*;
 import nana.TrialTrove.repository.MemberRepository;
 import nana.TrialTrove.service.MemberDetailsService;
 import nana.TrialTrove.service.MemberService;
+import nana.TrialTrove.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -36,14 +38,16 @@ import java.util.Optional;
 public class MemberController {
 
     private final MemberService memberService;
+    private final ProductService productService;
     private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
-    public MemberController(MemberService memberService, MemberRepository memberRepository, BCryptPasswordEncoder passwordEncoder) {
+    public MemberController(MemberService memberService, MemberRepository memberRepository, BCryptPasswordEncoder passwordEncoder, ProductService productService) {
         this.memberService = memberService;
         this.memberRepository = memberRepository;
         this.passwordEncoder = passwordEncoder;
+        this.productService = productService;
     }
 
 
@@ -155,7 +159,7 @@ public class MemberController {
         return "member/deleteAccount"; // 탈퇴 페이지를 보여줄 뷰 이름
     }
 
-    @PostMapping("/member/deleteAccount")
+    @PostMapping("/deleteAccount")
     public String deleteAccount(@RequestParam("password") String password, RedirectAttributes redirectAttributes, HttpServletRequest request, HttpServletResponse response) {
         try {
             // 현재 사용자 정보 가져오기
@@ -192,5 +196,25 @@ public class MemberController {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
             return "redirect:/member/delete"; // 회원 탈퇴 실패 시 다시 탈퇴 페이지로 리다이렉트
         }
+    }
+
+    // 체험 신청 목록
+
+    @GetMapping("/trialMap")
+    public String getMemberApplications(Model model,
+                                        @RequestParam(value = "page", defaultValue = "0") int page,
+                                        @RequestParam(value = "size", defaultValue = "5") int size) {
+        MemberDTO currentUser = memberService.getCurrentUser();
+        if (currentUser == null) {
+            // 로그인하지 않은 경우 로그인 페이지로 리다이렉트
+            return "redirect:/login";
+        }
+
+        Long currentUserId = currentUser.getId();
+
+        Page<ApplicationProductDTO> applications = productService.getMemberApplications(currentUserId, page, size);
+        model.addAttribute("applications", applications);
+        model.addAttribute("currentUser", currentUser);
+        return "member/trialMap";
     }
 }
