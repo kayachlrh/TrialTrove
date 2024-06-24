@@ -37,8 +37,6 @@ public class ContactDTO {
 
     private LocalDateTime modifiedDate;
 
-    private boolean deleted;
-
     private String adminComment;
 
     private LocalDateTime replyDate;

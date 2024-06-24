@@ -65,6 +65,11 @@
                     </div>
                  </form>
 
+                <!-- Hidden form for delete request -->
+                <form id="deleteDetailForm" th:action="@{'/board/delete/' + ${contactDTO.bno}}" method="post" style="display:none;">
+                    <input type="hidden" name="bno" th:value="${contactDTO.bno}">
+                </form>
+
                 <!-- Comments -->
                 <div class="post-comments" th:if="${contactDTO.adminComment != null}">
                     <h3 class="comment-title"><span>comments</span></h3>
@@ -255,7 +260,7 @@ function editComment(event) {
 
 <!-- 게시글 삭제-->
 function confirmDelete() {
-        var form = document.getElementById('deleteForm');
+        var form = document.getElementById('deleteDetailForm');
         if (form && confirm('삭제하시겠습니까?')) {
             form.submit();
         }

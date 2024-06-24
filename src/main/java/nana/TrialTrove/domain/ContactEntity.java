@@ -41,8 +41,6 @@ public class ContactEntity {
         this.modifiedDate = LocalDateTime.now();
     }
 
-    private boolean deleted;
-
     private String adminComment;
 
     // Setter 메서드

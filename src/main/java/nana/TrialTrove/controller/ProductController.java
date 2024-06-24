@@ -298,7 +298,7 @@ public class ProductController {
         model.addAttribute("product", updatedProduct);
 
         // 성공 페이지로 리다이렉트
-        return "redirect:/"; // 성공 페이지 경로
+        return "success/successMsg"; // 성공 페이지 경로
     }
 
     // 체험 신청 중복 확인

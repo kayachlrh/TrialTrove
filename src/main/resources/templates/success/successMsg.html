@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html class="no-js" lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/layout}">
+
+<body>
+<th:block layout:fragment="content">
+
+  <!-- Start Success Area -->
+  <div class="maill-success">
+    <div class="d-table">
+      <div class="d-table-cell">
+        <div class="container">
+          <div class="success-content">
+            <h1>Congratulations!</h1>
+            <h2>Your Application Successfully</h2>
+            <p>Thank you for applying. I hope you have good news.</p>
+            <div class="button">
+              <a href="/" class="btn">Go To Home</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- End Success Area -->
+
+
+  <script>
+   window.onload = function () {
+        window.setTimeout(fadeout, 500);
+    }
+
+    function fadeout() {
+        document.querySelector('.preloader').style.opacity = '0';
+        document.querySelector('.preloader').style.display = 'none';
+    }
+  </script>
+</th:block>
+</body>
+</html>

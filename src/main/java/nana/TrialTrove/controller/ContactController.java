@@ -32,12 +32,10 @@ public class ContactController {
     private static final Logger log = LoggerFactory.getLogger(MemberService.class);
 
     private final ContactService contactService;
-    private final ModelMapper modelMapper;
 
     @Autowired
-    public ContactController(ContactService contactService, ModelMapper modelMapper) {
+    public ContactController(ContactService contactService) {
         this.contactService = contactService;
-        this.modelMapper = modelMapper;
     }
 
     // 게시글 작성 폼을 보여주는 페이지
@@ -139,10 +137,19 @@ public class ContactController {
 
     // 게시판 수정
     @PostMapping("/modify/{bno}")
-    public String updateContact(@PathVariable(name = "bno") Long bno, @ModelAttribute ContactDTO updatedContact) {
-        updatedContact.setBno(bno);
-        contactService.updateContact(updatedContact);
-        return "redirect:/board/list"; // 수정 후 목록 페이지로 리다이렉트
+    public String updateContact(@PathVariable(name = "bno") Long bno, @ModelAttribute ContactDTO updatedContact, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+
+            List<FieldError> errors = bindingResult.getFieldErrors();
+            for (FieldError error : errors) {
+                model.addAttribute(error.getField() + "Error", error.getDefaultMessage());
+            }
+            return "board/modify";
+        } else {
+            updatedContact.setBno(bno);
+            contactService.updateContact(updatedContact);
+            return "redirect:/board/list";
+        }
     }
 
 
