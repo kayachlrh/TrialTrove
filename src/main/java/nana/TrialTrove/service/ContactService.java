@@ -7,11 +7,13 @@ import nana.TrialTrove.repository.ContactRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -22,6 +24,7 @@ public class ContactService {
 
     private final ContactRepository contactRepository;
     private final ModelMapper modelMapper;
+
 
 
     //    @Autowired
@@ -72,10 +75,8 @@ public class ContactService {
     // 게시글 조회
     @Transactional(readOnly = true)
     public Page<ContactDTO> getContactPage(Pageable pageable) {
-        Page<ContactEntity> contactPage = contactRepository.findByDeletedFalse(pageable);
-        return contactPage.map(contactEntity ->
-                modelMapper.map(contactEntity, ContactDTO.class)
-        );
+        Page<ContactEntity> contactPage = contactRepository.findAll(pageable);
+        return contactPage.map(contactEntity -> modelMapper.map(contactEntity, ContactDTO.class));
     }
 
     // 게시글 수정

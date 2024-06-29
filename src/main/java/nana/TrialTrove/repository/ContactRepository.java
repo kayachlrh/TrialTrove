@@ -13,9 +13,6 @@ import java.util.Optional;
 public interface ContactRepository extends JpaRepository<ContactEntity, Long> {
     Optional<ContactEntity> findByBno(Long bno);
 
-    // 삭제되지 않은 게시글 목록 조회
-    Page<ContactEntity> findByDeletedFalse(Pageable pageable);
-
 
 
 }

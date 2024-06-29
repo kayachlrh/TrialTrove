@@ -58,7 +58,7 @@
 
                     <div class="col-lg-6 col-12">
                         <div class="form-group">
-                            <input name="password" type="text" id="password" placeholder="Your Password" required="required" th:field="*{password}">
+                            <input name="password" type="password" id="password" placeholder="Your Password" required="required" th:field="*{password}">
                             <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
                         </div>
                     </div>

@@ -99,18 +99,9 @@ public class ContactController {
         // page에 해당하는 게시글 가져오기
         Page<ContactDTO> contactPage = contactService.getContactPage(PageRequest.of(page, pageSize));
 
-        // 전체 페이지 수
-        int totalPages = contactPage.getTotalPages();
-
-        // 현재 페이지 번호
-        int currentPage = contactPage.getNumber();
-
-        // 페이징된 게시글 목록
-        List<ContactDTO> contactList = contactPage.getContent();
-
-        model.addAttribute("contactList", contactList);
-        model.addAttribute("totalPages", totalPages);
-        model.addAttribute("currentPage", currentPage);
+        model.addAttribute("contactList", contactPage.getContent());
+        model.addAttribute("totalPages", contactPage.getTotalPages());
+        model.addAttribute("currentPage", page);
         model.addAttribute("activePage", "pages");
 
         return "board/list"; // contentList.html과 연결될 템플릿 파일명

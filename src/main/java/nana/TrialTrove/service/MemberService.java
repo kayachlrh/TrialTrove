@@ -39,8 +39,6 @@ public class MemberService {
         }
         // 패스워드 암호화
         String encryptedPassword = passwordEncoder.encode(memberDTO.getUserPw());
-        // 암호화된 비밀번호 앞에 알고리즘 정보를 추가하여 저장
-        // String passwordWithAlgorithm = "{bcrypt}" + encryptedPassword;
 
 
         // DTO를 엔티티로 변환
