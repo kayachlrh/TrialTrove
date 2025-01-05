@@ -1,14 +1,17 @@
 package nana.TrialTrove.service;
 
 
+import jakarta.validation.Valid;
 import nana.TrialTrove.domain.ContactDTO;
 import nana.TrialTrove.domain.ContactEntity;
+import nana.TrialTrove.domain.MemberEntity;
 import nana.TrialTrove.repository.ContactRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,23 +27,25 @@ public class ContactService {
 
     private final ContactRepository contactRepository;
     private final ModelMapper modelMapper;
-
-
-
-    //    @Autowired
-//    private PasswordEncoder passwordEncoder;
+    private final BCryptPasswordEncoder passwordEncoder;
     @Autowired
-    public ContactService(ContactRepository contactRepository, ModelMapper modelMapper) {
+    public ContactService(ContactRepository contactRepository, ModelMapper modelMapper, BCryptPasswordEncoder passwordEncoder) {
         this.contactRepository = contactRepository;
         this.modelMapper = modelMapper;
+        this.passwordEncoder = passwordEncoder;
+
     }
 
     // 게시글 생성
     @Transactional
     public ContactDTO createContact(ContactDTO contactDTO) {
         // 비밀번호를 BCrypt로 인코딩하여 저장
-        //contactEntity.setPassword(passwordEncoder.encode(contactEntity.getPassword()));
+        String encryptedPassword = passwordEncoder.encode(contactDTO.getPassword());
+
+        contactDTO.setPassword(encryptedPassword);
+
         ContactEntity contactEntity = modelMapper.map(contactDTO, ContactEntity.class);
+
         ContactEntity savedContactEntity = contactRepository.save(contactEntity);
         return modelMapper.map(savedContactEntity, ContactDTO.class);
     }
@@ -63,7 +68,7 @@ public class ContactService {
             ContactEntity contactEntity = optionalContactEntity.get();
 
             // 저장된 비밀번호와 입력된 비밀번호를 비교
-            if (contactEntity.getPassword().equals(password)) {
+            if (passwordEncoder.matches(password, contactEntity.getPassword())) {
                 return contactEntity; // 비밀번호가 일치하면 ContactEntity를 반환
             }
         }
@@ -82,9 +87,20 @@ public class ContactService {
     // 게시글 수정
     @Transactional
     public ContactDTO updateContact(ContactDTO updatedContact) {
+        // 비밀번호 암호화
+        String encryptedPassword = null;
+        if (updatedContact.getPassword() != null && !updatedContact.getPassword().isEmpty()) {
+            encryptedPassword = passwordEncoder.encode(updatedContact.getPassword());
+        }
+
+        // 비밀번호 설정
+        updatedContact.setPassword(encryptedPassword);
+
         ContactEntity contactEntity = modelMapper.map(updatedContact, ContactEntity.class);
-        contactEntity = contactRepository.save(contactEntity);
-        return modelMapper.map(contactEntity, ContactDTO.class);
+
+        ContactEntity  savedContactEntity= contactRepository.save(contactEntity);
+
+        return modelMapper.map(savedContactEntity, ContactDTO.class);
     }
 
 

@@ -53,7 +53,7 @@ public class SpringSecurityConfig {
         http
                 .authorizeHttpRequests((authorizeRequests) -> {
 
-                    authorizeRequests.requestMatchers("/member/myInfo","/member/updateMyInfo","/board/write","/board/detail","/product/favorite/**","/product/apply/**")
+                    authorizeRequests.requestMatchers("/member/myInfo","/member/updateMyInfo","/board/write","/board/detail/**","/product/favorite/**","/product/apply/**")
                             .hasAnyRole("ADMIN", "USER");
 
                     authorizeRequests.requestMatchers("/board/reply/**","/product/enroll","/product/update")

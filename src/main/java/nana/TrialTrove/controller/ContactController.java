@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -33,9 +34,12 @@ public class ContactController {
 
     private final ContactService contactService;
 
+    private final BCryptPasswordEncoder passwordEncoder;
+
     @Autowired
-    public ContactController(ContactService contactService) {
+    public ContactController(ContactService contactService, BCryptPasswordEncoder passwordEncoder) {
         this.contactService = contactService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     // 게시글 작성 폼을 보여주는 페이지
