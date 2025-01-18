@@ -7,10 +7,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class PasswordForm {
-
-    @NotEmpty(message = "현재 비밀번호를 입력해주세요.")
-    private String currentPassword;
+public class PasswordResetForm {
 
     @NotEmpty(message = "새 비밀번호를 입력해주세요.")
     @Pattern(
@@ -19,4 +16,7 @@ public class PasswordForm {
     )
     private String newPassword;
 
+    @NotEmpty(message = "새 비밀번호 확인을 입력해주세요.")
+    private String confirmPassword;
+    
 }

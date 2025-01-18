@@ -1,7 +1,21 @@
 
-# 네이버 간편로그인
+# SMTP 설정
 
 spring:
+  mail:
+    host: smtp.gmail.com # SMTP 서버 (Gmail 예시)
+    port: 587            # SMTP 포트
+    username: o3ozvoo@gmail.com # 발신 이메일 주소
+    password: axhuatjvcwltwwgp  # 발신 이메일 비밀번호 (앱 비밀번호)
+    properties:
+      mail:
+        smtp:
+          auth: true         # 인증 활성화
+          starttls:
+            enable: true     # TLS 암호화 활성화
+
+  # 네이버 간편로그인
+
   security:
     oauth2:
       client:
@@ -54,5 +68,9 @@ spring:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
+
+#  logging:
+#    level:
+#      org.springframework.security: DEBUG
 
 uploadDir: /Users/nana/Documents/work/uploads

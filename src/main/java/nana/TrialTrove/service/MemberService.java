@@ -144,6 +144,53 @@ public class MemberService {
             throw new IllegalArgumentException("사용자를 찾을 수 없습니다.");
         }
     }
+
+
+    // 회원 아이디 찾기
+    public Optional<MemberDTO> findByEmailAndName(String email, String name) {
+        Optional<MemberEntity> memberEntity = memberRepository.findByEmailAndName(email, name);
+
+        return memberEntity.map(entity -> {
+            MemberDTO memberDTO = modelMapper.map(entity, MemberDTO.class);
+            return memberDTO;
+        });
+    }
+
+    // 이메일로 아이디 조회
+    public Optional<MemberDTO> findByEmail(String email) {
+        Optional<MemberEntity> memberEntity = memberRepository.findByEmail(email);
+        return memberEntity.map(entity -> modelMapper.map(entity, MemberDTO.class));
+    }
+
+    // 비밀번호 찾기
+    public Optional<MemberDTO> findByEmailAndUserId(String email, String userId) {
+        return memberRepository.findByEmailAndUserId(email, userId)
+                .map(entity -> modelMapper.map(entity, MemberDTO.class));
+    }
+
+    // 비밀번호 업데이트
+    public boolean resetPassword(String userId, String newPassword) {
+        // 사용자 조회
+        Optional<MemberEntity> memberOptional = memberRepository.findByUserId(userId);
+        if (memberOptional.isEmpty()) {
+            throw new IllegalArgumentException("사용자를 찾을 수 없습니다.");
+        }
+
+        MemberEntity member = memberOptional.get();
+
+        // 이전 비밀번호와 동일한지 확인
+        if (passwordEncoder.matches(newPassword, member.getUserPw())) {
+            return false; // 이전 비밀번호와 동일하면 변경 불가
+        }
+
+        // 비밀번호 암호화 후 업데이트
+        String encodedPassword = passwordEncoder.encode(newPassword);
+        member.setUserPw(encodedPassword);
+
+        // 변경된 엔티티 저장
+        memberRepository.save(member);
+        return true;
+    }
 }
 
 

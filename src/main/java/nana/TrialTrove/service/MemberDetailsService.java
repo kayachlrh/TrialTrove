@@ -37,6 +37,7 @@ public class MemberDetailsService implements UserDetailsService {
                     return new UsernameNotFoundException(errorMessage);
                 });
 
+
         // MemberEntity를 MemberDTO로 변환
         MemberDTO memberDTO = new MemberDTO();
         memberDTO.setId(member.getId());
