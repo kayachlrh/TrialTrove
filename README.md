@@ -79,9 +79,7 @@
 
 <br/> <br/>     
  ##  게시판(Notice, FAQ)
-    - CRUD 게시판 구현
-    - 페이징처리 구현
-    - 관리자만 공지사항, 답변 기능 부여
+    - 관리자만 답변 기능 부여
  👉🏻 *게시글 등록 / 수정 / 삭제*
 ![게시판등록수정삭제](https://github.com/user-attachments/assets/38c8e54c-eeed-4a9b-922d-203563770fc2)
 
