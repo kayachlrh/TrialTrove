@@ -30,9 +30,17 @@ dependencies {
 	// modelMapper: DTO 와 엔티티 간 변환 처리해주는 라이브러리
 	implementation "org.modelmapper:modelmapper:3.2.0"
 
+	// Spring WebSocket
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
 	runtimeOnly 'com.h2database:h2'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
+	// Mockito
+	testImplementation 'org.mockito:mockito-core:5.0.0'
+
+	// AssertJ
+	testImplementation 'org.assertj:assertj-core:3.24.2'
 
 }
 

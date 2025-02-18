@@ -57,3 +57,83 @@ CREATE TABLE userProfile (
     name VARCHAR(255),
     email VARCHAR(255)
 );
+
+-- 채팅
+CREATE TABLE messages (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    sender_id BIGINT NOT NULL,
+    receiver_id BIGINT NOT NULL,
+    content TEXT NOT NULL,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 메시지 읽음 여부 확인
+ALTER TABLE messages ADD COLUMN isRead BOOLEAN DEFAULT FALSE;
+
+table member {
+  id bigint [primary key]
+  userId varchar [not null, unique]
+  userPw varchar [not null]
+  email varchar [not null, unique]
+  name varchar [not null]
+}
+
+table board {
+  bno bigint [primary key]
+  writer varchar
+  title varchar
+  content varchar
+  modifiedDate timestamp
+  regDate timestamp
+  password varchar
+  adminComment varchar
+}
+
+table product {
+  id bigint [primary key]
+  name varchar
+  image varchar
+  seller_name varchar
+  location varchar
+  deadlineDate date
+  applicants integer
+  max_applicants integer
+  description text
+  activity_type varchar
+  owner_id bigint [ref: > member.id]
+  category_id bigint [ref: > category.id]
+}
+
+table userProfile {
+  id bigint [primary key]
+  email varchar
+  name varchar
+}
+
+table applications {
+  id bigint [primary key]
+  member_id bigint [ref: > member.id]
+  product_id bigint [ref: > product.id]
+  application_date timestamp
+  status varchar
+  phone varchar
+}
+
+table category {
+  id bigint [primary key]
+  name varchar
+}
+
+table member_favorite {
+  member_id bigint [ref: > member.id]
+  product_id bigint [ref: > product.id]
+}
+
+table messages {
+  id bigint [primary key]
+  sender_id bigint [not null]
+  receiver_id bigint [not null]
+  content text [not null]
+  isRead boolean
+  timestamp timestamp
+}

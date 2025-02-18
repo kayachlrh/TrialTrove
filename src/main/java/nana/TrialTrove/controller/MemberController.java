@@ -4,12 +4,16 @@ package nana.TrialTrove.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nana.TrialTrove.domain.*;
 import nana.TrialTrove.repository.MemberRepository;
 import nana.TrialTrove.service.MemberDetailsService;
 import nana.TrialTrove.service.MemberService;
+import nana.TrialTrove.service.MessageService;
 import nana.TrialTrove.service.ProductService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -30,25 +34,20 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RequestMapping("/member/*")
 @Controller
 @Slf4j
+@RequiredArgsConstructor
 public class MemberController {
 
     private final MemberService memberService;
     private final ProductService productService;
     private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder passwordEncoder;
-
-    @Autowired
-    public MemberController(MemberService memberService, MemberRepository memberRepository, BCryptPasswordEncoder passwordEncoder, ProductService productService) {
-        this.memberService = memberService;
-        this.memberRepository = memberRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.productService = productService;
-    }
+    private final MessageService messageService;
 
 
     // 회원가입 페이지

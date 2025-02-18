@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -80,7 +81,10 @@ public class ContactService {
     // 게시글 조회
     @Transactional(readOnly = true)
     public Page<ContactDTO> getContactPage(Pageable pageable) {
-        Page<ContactEntity> contactPage = contactRepository.findAll(pageable);
+        // 내림차순 : 게시글 번호 기준
+        Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Order.desc("bno")));
+
+        Page<ContactEntity> contactPage = contactRepository.findAll(sortedPageable);
         return contactPage.map(contactEntity -> modelMapper.map(contactEntity, ContactDTO.class));
     }
 

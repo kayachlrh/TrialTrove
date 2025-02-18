@@ -17,7 +17,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.validation.BindingResult;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -191,6 +193,14 @@ public class MemberService {
         memberRepository.save(member);
         return true;
     }
-}
 
+    // 회원 목록 가져오기
+    public List<MemberDTO> getAllUserExceptCurrent(String currentUserId) {
+        List<MemberEntity> members = memberRepository.findAllByUserIdNot(currentUserId);
+
+        return members.stream()
+                .map(member -> new MemberDTO(member.getId(), member.getUserId()))
+                .collect(Collectors.toList());
+    }
+}
 

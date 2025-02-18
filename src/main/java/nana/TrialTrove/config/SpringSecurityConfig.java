@@ -53,7 +53,7 @@ public class SpringSecurityConfig {
         http
                 .authorizeHttpRequests((authorizeRequests) -> {
 
-                    authorizeRequests.requestMatchers("/member/myInfo","/member/updateMyInfo","/board/write","/board/detail/**","/product/favorite/**","/product/apply/**")
+                    authorizeRequests.requestMatchers("/member/myInfo","/member/updateMyInfo","/board/write","/board/detail/**","/product/favorite/**","/product/apply/**", "/ws/**")
                             .hasAnyRole("ADMIN", "USER");
 
                     authorizeRequests.requestMatchers("/board/reply/**","/product/enroll","/product/update")
@@ -71,7 +71,7 @@ public class SpringSecurityConfig {
                 .csrf(csrf -> csrf
                 //.csrfTokenRequestHandler()
                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                .ignoringRequestMatchers("/", "/member/**", "/board/**", "/product/**", "/admin/**")
+                .ignoringRequestMatchers("/", "/member/**", "/board/**", "/product/**", "/admin/**", "/ws/**", "/messages/**")
         );
         http
                 .sessionManagement((sessionManagement) ->

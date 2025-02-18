@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html class="no-js" lang="zxx"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/layout}">
+<head>
+  <style>
+        .chat-name {
+            font-size: 14px;
+            font-weight: bold;
+            background-color: #eee;
+            padding: 5px 10px;
+            border-radius: 5px;
+            display: inline-block;
+            margin-bottom: 5px;
+        }
+        .right .chat-name {
+            color: blue; /* 내 아이디 색상 */
+        }
+        .left .chat-name{
+            color: green; /* 상대방 아이디 색상 */
+        }
+    </style>
+</head>
+
+
+<body>
+<th:block layout:fragment="content">
+
+  <!-- Start Breadcrumbs -->
+  <div class="breadcrumbs">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-6 col-md-6 col-12">
+          <div class="breadcrumbs-content">
+            <h1 class="page-title">messages</h1>
+          </div>
+        </div>
+        <div class="col-lg-6 col-md-6 col-12">
+          <ul class="breadcrumb-nav">
+            <li><a href="../main/index.html">Home</a></li>
+            <li>messages</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- End Breadcrumbs -->
+
+  <!-- Start Dashboard Section -->
+  <section class="dashboard section">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-3 col-md-4 col-12">
+          <!-- Start Dashboard Sidebar -->
+          <div class="dashboard-sidebar">
+            <h3 th:text="${#authentication.principal.username}">
+              <span><a href="javascript:void(0)" th:text="${#authentication.principal.username}"></a></span>
+            </h3>
+            <div class="dashboard-menu">
+              <ul>
+                <li><a href="/member/myInfo"><i class="lni lni-pencil-alt"></i>
+                  내 정보 </a></li>
+                <li><a href="/product/favorite"><i class="lni lni-heart"></i> 보물함 </a></li>
+                <li><a href="/member/trialMap"><i class="lni lni-bookmark"></i> 보물지도 </a></li>
+                <li><a class="active" href="/message"><i class="lni lni-envelope"></i> 메시지 </a></li>
+
+                <!-- 관리자 체험등록 링크 -->
+                <li th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">
+                  <a href="../product/enroll"><i class="lni lni-circle-plus"></i> 체험등록 </a>
+                </li>
+
+                <!-- 관리자 대시보드 링크 -->
+                <li th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">
+                  <a href="/admin/dashboard"><i class="lni lni-dashboard"></i> Dashboard</a>
+                </li>
+
+                <li><a href="/member/delete"><i class="lni lni-trash"></i> 회원탈퇴 </a></li>
+              </ul>
+              <div class="button">
+                <a class="btn" th:href="@{/member/logout}">Logout</a>
+              </div>
+            </div>
+          </div>
+          <!-- Start Dashboard Sidebar -->
+        </div>
+        <div class="col-lg-9 col-md-8 col-12">
+          <div class="main-content">
+            <div class="dashboard-block mt-0 pb-0">
+              <h3 class="block-title mb-0">Messages</h3>
+              <!-- Start Messages Body -->
+              <div class="messages-body">
+                <div class="form-head">
+                  <div class="row align-items-center">
+                    <div class="col-lg-5 col-12">
+                      <form class="chat-search-form">
+                        <input type="text" placeholder="Search username" name="search">
+                        <button value="search" type="submit"><i
+                                class="lni lni-search-alt"></i></button>
+                      </form>
+                    </div>
+                    <div class="col-lg-7 col-12 align-right">
+                      <h3 class="username-title" th:text="${#authentication.principal.username}"></h3>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-5 col-12">
+                    <!-- Start User List -->
+                    <div class="user-list">
+                      <ul>
+                        <!-- Start Single List -->
+                        <li th:each="member : ${members}">
+                          <a href="javascript:void(0)">
+                            <!-- 온라인 여부 -->
+                            <div class="image busy"></div> <!-- 기본은 오프라인 -->
+                            <span class="username" th:text="${member.userId}"></span>
+                            <span class="unseen-message" th:text="${unreadCounts != null && unreadCounts[member.userId] != null ? unreadCounts[member.userId] : '0'}"></span> <!-- 미확인 메시지 수 (임시) -->
+                          </a>
+                        </li>
+                        <!-- End Single List -->
+                      </ul>
+                    </div>
+                    <!-- End User List -->
+                  </div>
+                  <div class="col-lg-7 col-12">
+                    <!-- Start Chat List -->
+                    <div class="chat-list" style="display: none;">
+                      <ul class="single-chat-head" id="chatList">
+                        <!-- 채팅 본문 -->
+                      </ul>
+                      <div class="reply-block">
+                        <input id="messageInput" name="reply" type="text" placeholder="Type your message here...">
+                        <button class="reply-btn"><img
+                                src="/static/assets/images/messages/send.svg" alt="#"></button>
+                      </div>
+                    </div>
+                    <!-- End Chat List -->
+                  </div>
+                </div>
+              </div>
+              <!-- End Messages Body -->
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </section>
+  <!-- End Dashboard Section -->
+
+  <!-- ========================= scroll-top ========================= -->
+  <a href="#" class="scroll-top btn-hover">
+    <i class="lni lni-chevron-up"></i>
+  </a>
+  <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+
+  <script>
+let stompClient = null;
+let currentChatUser = null; // 현재 채팅 중인 사용자 ID
+let currentUserId = document.querySelector(".username-title").textContent.trim(); // 로그인한 사용자 ID 가져오기
+
+// 🔹 WebSocket 연결 함수
+function connect() {
+    let socket = new SockJS('/ws'); // WebSocket 엔드포인트
+    stompClient = Stomp.over(socket);
+
+    stompClient.connect({}, async function (frame) {
+        console.log('Connected: ' + frame);
+
+        // ✅ 웹소켓 연결 후 미확인 메시지 개수 가져오기
+        await fetchUnreadMessages();
+
+        // 🔹 전체 채팅 메시지 구독 (모든 사용자에게 메시지가 전달됨)
+        stompClient.subscribe('/topic/chat', function (message) {
+            let receivedMessage = JSON.parse(message.body);
+            console.log("Received:", receivedMessage);
+            displayMessage(receivedMessage);
+        });
+
+        // 🔹 온라인 유저 목록 구독 (연결된 후 실행)
+        stompClient.subscribe('/topic/onlineUsers', function (message) {
+            let onlineUsers = JSON.parse(message.body);
+            console.log("온라인 유저 목록 업데이트:", onlineUsers);
+            updateOnlineStatus(onlineUsers);
+        });
+
+        // 🔹 현재 로그인한 사용자의 온라인 상태를 서버에 전송 (연결된 후 실행)
+        stompClient.send("/app/user.online", {}, JSON.stringify({ userId: currentUserId }));
+    });
+}
+
+// 🔹 온라인 상태 업데이트 함수
+function updateOnlineStatus(onlineUsers) {
+    document.querySelectorAll(".user-list li").forEach(li => {
+        let usernameElement = li.querySelector(".username");
+        if (!usernameElement) return;
+
+        let userId = usernameElement.textContent.trim();
+        let imageElement = li.querySelector(".image");
+        let unseenMessageElement = li.querySelector(".unseen-message");
+
+        let userInfo = onlineUsers.find(user => user.userId === userId);
+
+        if (userInfo) {
+            imageElement.classList.remove("busy"); // 온라인 상태
+        } else {
+            imageElement.classList.add("busy"); // 오프라인 상태
+        }
+    });
+    fetchUnreadMessages();
+}
+
+// 🔹 메시지 전송 함수
+function sendMessage() {
+    let messageInput = document.getElementById("messageInput");
+    let messageContent = messageInput.value.trim();
+
+    if (!messageContent || !currentChatUser) {
+        console.log("메시지 내용이 없거나, 채팅 상대가 선택되지 않음");
+        return;
+    }
+
+    let chatMessage = {
+        senderUserId: currentUserId, // 현재 로그인한 사용자
+        receiverUserId: currentChatUser, // 현재 대화 중인 상대방
+        content: messageContent
+    };
+
+    // WebSocket을 통해 메시지 전송
+    stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(chatMessage));
+
+
+    messageInput.value = ""; // 입력창 초기화
+}
+
+// 🔹 메시지 화면에 추가 함수
+function displayMessage(message) {
+    let chatList = document.getElementById("chatList");
+    let messageItem = document.createElement("li");
+
+    if (message.senderUserId === currentUserId) {
+        messageItem.className = "right"; // 내가 보낸 메시지
+        messageItem.innerHTML = `
+            <h3 class="chat-name">${message.senderUserId}</h3>
+            <p class="text">${message.content}</p>
+            <span class="time">${new Date(message.timestamp).toLocaleTimeString()}</span>
+        `;
+    } else {
+        messageItem.className = "left"; // 상대가 보낸 메시지
+        messageItem.innerHTML = `
+            <h3 class="chat-name">${message.senderUserId}</h3>
+            <p class="text">${message.content}</p>
+            <span class="time">${new Date(message.timestamp).toLocaleTimeString()}</span>
+        `;
+    }
+
+    chatList.appendChild(messageItem);
+    chatList.scrollTop = chatList.scrollHeight; // 스크롤 자동 이동
+}
+
+// 🔹 채팅방 선택 이벤트 (클릭한 유저와 대화 시작)
+document.querySelectorAll(".user-list li a").forEach(item => {
+    item.addEventListener("click", async function () {
+        const receiverUserId = this.querySelector(".username").textContent.trim();
+        console.log("채팅 상대:", receiverUserId);  // 값 확인
+
+        if (!receiverUserId) {
+            console.error("Invalid user ID format");
+            return;
+        }
+
+        // 현재 채팅 상대 설정
+        currentChatUser = receiverUserId;
+
+        console.log("🟢 현재 채팅 상대 설정됨 (ID):", currentChatUser);
+
+        let usernameTitle = document.querySelector(".username-title");
+        if (usernameTitle) {
+            usernameTitle.textContent = receiverUserId;
+        }
+
+        document.querySelector(".chat-list").style.display = "block";
+
+        try {
+            let response = await fetch(`/messages/mark-as-read/${currentChatUser}`, { method: "POST" });
+            let result = await response.json();
+            console.log("메시지 읽음 처리 결과:", result);
+
+             // 메시지를 읽었으면 숫자도 업데이트
+            let unseenMessageElement = this.querySelector(".unseen-message");
+            if (unseenMessageElement) {
+                unseenMessageElement.textContent = "0";
+            }
+        } catch (error) {
+            console.error("메시지 읽음 처리 중 오류 발생:", error);
+        }
+
+        await loadMessageHistory(currentChatUser);
+    });
+});
+
+// 🔹 이전 채팅 내역을 서버에서 불러오기
+async function loadMessageHistory() {
+        try {
+        // 대화 내역을 서버에서 가져옵니다.
+        const response = await fetch(`/messages?receiver=${currentChatUser}`);
+        const messages = await response.json();  // 서버에서 JSON으로 반환된 메시지 목록
+
+        // 메시지가 있을 경우, 모든 메시지를 화면에 출력
+        if (messages && messages.length > 0) {
+           // 타임스탬프 기준으로 오름차순 정렬
+            messages.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+
+            // 정렬된 메시지를 화면에 추가
+            messages.forEach(message => {
+                displayMessage(message);  // 각 메시지를 화면에 추가
+            });
+        }
+    } catch (error) {
+        console.error("채팅 기록 불러오기 오류:", error);
+    }
+}
+
+// 🔹 미확인 메시지 개수 가져오는 함수
+async function fetchUnreadMessages() {
+    try {
+        let response = await fetch(`/messages/unread/${currentUserId}`);
+        if (!response.ok) {
+            throw new Error("서버 응답 오류");
+        }
+
+        let unreadMessages = await response.json();
+        console.log("📩 미확인 메시지 개수:", unreadMessages);
+
+        // 🔹 미확인 메시지 개수를 UI에 적용
+        document.querySelectorAll(".user-list li").forEach(li => {
+            let usernameElement = li.querySelector(".username");
+            if (!usernameElement) return;
+
+            let userId = usernameElement.textContent.trim();
+            let unseenMessageElement = li.querySelector(".unseen-message");
+
+            let unreadCount = unreadMessages[userId] || 0; // userId에 해당하는 미확인 메시지 개수
+
+            if (unseenMessageElement) {
+                unseenMessageElement.textContent = unreadCount > 0 ? unreadCount : "0";
+            }
+        });
+
+    } catch (error) {
+        console.error("미확인 메시지 가져오기 실패:", error);
+    }
+}
+
+// 🔹 버튼 클릭 시 메시지 전송
+document.querySelector(".reply-btn").addEventListener("click", function () {
+    console.log("Send button clicked!");
+    sendMessage();
+});
+
+// 🔹 엔터키로 메시지 전송
+document.getElementById("messageInput").addEventListener("keypress", function (e) {
+    if (e.key === "Enter") {
+        sendMessage();
+    }
+});
+
+// 🔹 초기 WebSocket 연결 실행
+connect();
+
+
+</script>
+</th:block>
+</body>
+</html>

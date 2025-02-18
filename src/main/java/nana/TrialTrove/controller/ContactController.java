@@ -103,19 +103,14 @@ public class ContactController {
         // page에 해당하는 게시글 가져오기
         Page<ContactDTO> contactPage = contactService.getContactPage(PageRequest.of(page, pageSize));
 
+
         model.addAttribute("contactList", contactPage.getContent());
         model.addAttribute("totalPages", contactPage.getTotalPages());
         model.addAttribute("currentPage", page);
         model.addAttribute("activePage", "pages");
 
-        return "board/list"; // contentList.html과 연결될 템플릿 파일명
-    }
 
-    // faq page
-    @GetMapping("/faq")
-    public String showFaqPage(Model model) {
-        model.addAttribute("activePage", "pages");
-        return "board/faq"; // FAQ 페이지를 나타내는 뷰의 이름을 반환
+        return "board/list"; // contentList.html과 연결될 템플릿 파일명
     }
 
     // 게시판 수정 페이지
