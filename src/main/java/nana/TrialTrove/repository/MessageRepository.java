@@ -12,7 +12,7 @@ import java.util.List;
 @Repository
 public interface MessageRepository extends JpaRepository<MessageEntity, Long> {
     // 특정 사용자가 주고받은 메시지를 조회
-    List<MessageEntity> findBySenderIdAndReceiverId(Long sender, Long receiver);
+    List<MessageEntity> findBySenderIdAndReceiverId(Long senderId, Long receiverId);
 
     int countByReceiverIdAndIsReadFalse(Long receiverId);
 

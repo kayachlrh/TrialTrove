@@ -57,18 +57,15 @@ public class MessageController {
 
     // 메시지 조회 (특정 사용자와의 메시지 불러오기)
     @GetMapping("/messages")
-    public ResponseEntity<List<MessageDTO>> getMessages(@RequestParam(name = "receiver") String receiverUserId, Principal principal) {
-        Long sender = memberRepository.findByUserId(principal.getName())
-                .orElseThrow(() -> new RuntimeException("User not found"))
-                .getId();
-
-        // receiverUserId가 숫자라면 Long으로 변환, 그렇지 않으면 문자열 그대로 사용
-        Long receiver = memberRepository.findByUserId(receiverUserId)
-                .orElseThrow(() -> new RuntimeException("Receiver user not found"))
-                .getId();
+    public ResponseEntity<List<MessageDTO>> getMessages(@RequestParam(name = "receiver") String receiverUserId,
+                                                        Principal principal) {
+        String senderUserId = principal.getName();
 
         // 두 사용자의 대화 내역을 가져옵니다
-        List<MessageDTO> messageDTOs = messageService.getMessages(sender, receiver);
+        List<MessageDTO> messageDTOs = messageService.getMessages(senderUserId, receiverUserId);
+
+        System.out.println("보낸 사람 ID: " + senderUserId);
+        System.out.println("받은 사람 ID: " + receiverUserId);
 
         return ResponseEntity.ok(messageDTOs);
     }

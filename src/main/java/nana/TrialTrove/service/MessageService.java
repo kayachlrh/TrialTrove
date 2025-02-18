@@ -23,22 +23,31 @@ public class MessageService {
     private final ModelMapper modelMapper;
 
     // 특정 사용자와의 채팅 내역 조회
-    public List<MessageDTO> getMessages(Long sender, Long receiver) {
-        // ① 내가 보낸 메시지 (sender = 나, receiver = 상대방)
-        List<MessageEntity> sentMessages = messageRepository.findBySenderIdAndReceiverId(sender, receiver);
+    public List<MessageDTO> getMessages(String senderUserId, String receiverUserId) {
+        // senderUserId와 receiverUserId를 사용하여 sender와 receiver의 ID를 찾음
+        Long senderId = memberRepository.findByUserId(senderUserId)
+                .orElseThrow(() -> new RuntimeException("Sender not found"))
+                .getId();
 
-        // ② 상대가 보낸 메시지 (sender = 상대방, receiver = 나)
-        List<MessageEntity> receivedMessages = messageRepository.findBySenderIdAndReceiverId(receiver, sender);
+        Long receiverId = memberRepository.findByUserId(receiverUserId)
+                .orElseThrow(() -> new RuntimeException("Receiver not found"))
+                .getId();
 
-        // ③ 두 리스트 합치고, 시간순 정렬
+        // sender와 receiver 간의 메시지 내역을 조회
+        List<MessageEntity> sentMessages = messageRepository.findBySenderIdAndReceiverId(senderId, receiverId);
+        List<MessageEntity> receivedMessages = messageRepository.findBySenderIdAndReceiverId(receiverId, senderId);
+
+        // 메시지 리스트 합치기
         List<MessageEntity> allMessages = new ArrayList<>();
         allMessages.addAll(sentMessages);
         allMessages.addAll(receivedMessages);
-        allMessages.sort(Comparator.comparing(MessageEntity::getTimestamp)); // 시간순 정렬
 
-        // ④ DTO로 변환 후 반환
+        // 시간순 정렬
+        allMessages.sort(Comparator.comparing(MessageEntity::getTimestamp));
+
+        // MessageEntity → MessageDTO 변환 후 반환
         return allMessages.stream()
-                .map(MessageDTO::of)  // MessageEntity → MessageDTO 변환
+                .map(MessageDTO::of)  // MessageEntity를 MessageDTO로 변환
                 .collect(Collectors.toList());
     }
 

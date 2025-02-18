@@ -159,6 +159,8 @@
 let stompClient = null;
 let currentChatUser = null; // 현재 채팅 중인 사용자 ID
 let currentUserId = document.querySelector(".username-title").textContent.trim(); // 로그인한 사용자 ID 가져오기
+let loadedMessages = {};
+
 
 // 🔹 WebSocket 연결 함수
 function connect() {
@@ -238,6 +240,7 @@ function sendMessage() {
 function displayMessage(message) {
     let chatList = document.getElementById("chatList");
     let messageItem = document.createElement("li");
+    messageItem.setAttribute("data-message-id", message.id);
 
     if (message.senderUserId === currentUserId) {
         messageItem.className = "right"; // 내가 보낸 메시지
@@ -270,6 +273,12 @@ document.querySelectorAll(".user-list li a").forEach(item => {
             return;
         }
 
+        // 해당 사용자의 채팅방이 열려있는지 확인
+        if (currentChatUser === receiverUserId) {
+            console.log("채팅방이 이미 열려있습니다.");
+            return;
+        }
+
         // 현재 채팅 상대 설정
         currentChatUser = receiverUserId;
 
@@ -282,12 +291,16 @@ document.querySelectorAll(".user-list li a").forEach(item => {
 
         document.querySelector(".chat-list").style.display = "block";
 
+        // 채팅방을 전환할 때마다 메시지 리스트 초기화
+        let chatList = document.getElementById("chatList");
+        chatList.innerHTML = "";
+
         try {
             let response = await fetch(`/messages/mark-as-read/${currentChatUser}`, { method: "POST" });
             let result = await response.json();
             console.log("메시지 읽음 처리 결과:", result);
 
-             // 메시지를 읽었으면 숫자도 업데이트
+            // 메시지를 읽었으면 숫자도 업데이트
             let unseenMessageElement = this.querySelector(".unseen-message");
             if (unseenMessageElement) {
                 unseenMessageElement.textContent = "0";
@@ -296,21 +309,34 @@ document.querySelectorAll(".user-list li a").forEach(item => {
             console.error("메시지 읽음 처리 중 오류 발생:", error);
         }
 
-        await loadMessageHistory(currentChatUser);
+        // 메시지 내역이 로드되어 있는지 확인
+        if (!loadedMessages[currentChatUser]) {
+              await loadMessageHistory(currentChatUser);
+          } else {
+              console.log("이미 메시지 내역이 로드되었습니다.");
+              // 이전에 불러온 메시지를 화면에 표시
+              loadedMessages[currentChatUser].forEach(message => {
+                  displayMessage(message);
+              });
+          }
     });
 });
 
 // 🔹 이전 채팅 내역을 서버에서 불러오기
-async function loadMessageHistory() {
-        try {
+async function loadMessageHistory(receiverUserId) {
+     try {
         // 대화 내역을 서버에서 가져옵니다.
-        const response = await fetch(`/messages?receiver=${currentChatUser}`);
+        const response = await fetch(`/messages?receiver=${receiverUserId}`);
         const messages = await response.json();  // 서버에서 JSON으로 반환된 메시지 목록
 
         // 메시지가 있을 경우, 모든 메시지를 화면에 출력
         if (messages && messages.length > 0) {
            // 타임스탬프 기준으로 오름차순 정렬
             messages.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+
+
+           // 메시지를 저장
+           loadedMessages[receiverUserId] = messages;
 
             // 정렬된 메시지를 화면에 추가
             messages.forEach(message => {
@@ -320,6 +346,13 @@ async function loadMessageHistory() {
     } catch (error) {
         console.error("채팅 기록 불러오기 오류:", error);
     }
+}
+
+// 🔹 채팅방 닫을 때 상태 초기화
+function closeChat() {
+    currentChatUser = null;
+    loadedMessages = {};  // 메시지 내역 초기화
+    document.querySelector(".chat-list").style.display = "none";  // 채팅 리스트 숨기기
 }
 
 // 🔹 미확인 메시지 개수 가져오는 함수

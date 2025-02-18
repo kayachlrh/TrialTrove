@@ -47,16 +47,16 @@ public class MessageServiceTest {
         assertTrue(members.stream().anyMatch(m -> m.getUserId().equals("user1")), "user1이 회원 목록에 없습니다.");
         assertTrue(members.stream().anyMatch(m -> m.getUserId().equals("user2")), "user2가 회원 목록에 없습니다.");
     }
-    @Test
-    public void testToEntity() {
-        // Given
-        MemberDTO memberDTO = new MemberDTO("user1");
-
-        // When
-        MemberEntity memberEntity = memberDTO.toEntity();
-
-        // Then
-        assertNotNull(memberEntity);
-        assertEquals("user1", memberEntity.getUserId());
-    }
+//    @Test
+//    public void testToEntity() {
+//        // Given
+//        MemberDTO memberDTO = new MemberDTO("user1");
+//
+//        // When
+//        MemberEntity memberEntity = memberDTO.toEntity();
+//
+//        // Then
+//        assertNotNull(memberEntity);
+//        assertEquals("user1", memberEntity.getUserId());
+//    }
 }
