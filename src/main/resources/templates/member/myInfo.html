@@ -73,6 +73,7 @@
               <h3 class="block-title">Profile Settings</h3>
               <div class="inner-block">
                 <form class="profile-setting-form" method="post" action="/member/updateMyInfo">
+                  <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                   <div class="row">
                     <div class="col-lg-6 col-12">
                       <div class="form-group">

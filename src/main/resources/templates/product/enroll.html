@@ -98,6 +98,7 @@
                                         <!-- Start Post Ad Step One Content -->
                                         <div class="step-one-content">
                                             <form id="form1" class="default-form-style" method="post" action="/product/enroll" enctype="multipart/form-data">
+                                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                                                 <div class="row">
                                                     <div class="col-12">
                                                         <div class="form-group">

@@ -71,7 +71,7 @@ public class SpringSecurityConfig {
                 .csrf(csrf -> csrf
                 //.csrfTokenRequestHandler()
                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                .ignoringRequestMatchers("/", "/member/**", "/board/**", "/product/**", "/admin/**", "/ws/**", "/messages/**")
+                .ignoringRequestMatchers("/ws/**", "/messages/**")
         );
         http
                 .sessionManagement((sessionManagement) ->

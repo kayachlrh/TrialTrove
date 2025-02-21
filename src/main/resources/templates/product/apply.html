@@ -33,6 +33,7 @@
     <section class="item-details section">
         <div class="container">
             <form th:object="${applicationDTO}" th:action="@{/product/apply/{productId}(productId=${productId})}" method="POST" class="profile-setting-form">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                 <div class="top-area">
                     <div class="row">
                         <div class="col-lg-8 col-md-7 col-12">

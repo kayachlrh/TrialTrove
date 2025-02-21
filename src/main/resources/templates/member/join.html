@@ -37,6 +37,7 @@
                     <div class="form-head">
                         <h4 class="title">Registration</h4>
                         <form id="joinForm" action="/member/join" method="post" th:object="${member}">
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                             <div class="alt-option">
                                 <span>Or</span>
                             </div>
