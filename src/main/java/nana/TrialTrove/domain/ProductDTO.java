@@ -12,6 +12,7 @@ import java.time.LocalDate;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class ProductDTO {
 
     private Long id;
@@ -31,27 +32,28 @@ public class ProductDTO {
     private MultipartFile imageFile; // 업로드된 이미지 파일
 
     // 체험 목록
-    @ConstructorProperties({"id", "productName", "image", "sellerName", "location", "deadlineDate","applicants", "maxApplicants", "activityType", "categoryName", "description"})
-    public ProductDTO(Long id, String productName, String image, String sellerName, String location, LocalDate deadlineDate, int applicants, int maxApplicants, String description, String activityType, String categoryName) {
-        this.id = id;
-        this.productName = productName;
-        this.image = image;
-        this.sellerName = sellerName;
-        this.location = location;
-        this.deadlineDate = deadlineDate;
-        this.applicants = applicants;
-        this.maxApplicants = maxApplicants;
-        this.description = description;
-        this.activityType = activityType;
-        this.categoryName = categoryName;
+    public static ProductDTO of(ProductEntity entity) {
+        return ProductDTO.builder()
+                .id(entity.getId())
+                .productName(entity.getProductName())
+                .image(entity.getImage())
+                .sellerName(entity.getSellerName())
+                .location(entity.getLocation())
+                .deadlineDate(entity.getDeadlineDate())
+                .applicants(entity.getApplicants())
+                .maxApplicants(entity.getMaxApplicants())
+                .description(entity.getDescription())
+                .activityType(entity.getActivityType())
+                .categoryName(entity.getCategory().getName()) // 카테고리 이름 가져오기
+                .build();
     }
 
     // 체험 디테일 수정
 
-    public ProductDTO(Long id, String productName, String description, int maxApplicants) {
-        this.id = id;
-        this.productName = productName;
-        this.description = description;
-        this.maxApplicants = maxApplicants;
-    }
+//    public ProductDTO(Long id, String productName, String description, int maxApplicants) {
+//        this.id = id;
+//        this.productName = productName;
+//        this.description = description;
+//        this.maxApplicants = maxApplicants;
+//    }
 }

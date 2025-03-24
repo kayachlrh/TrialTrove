@@ -136,19 +136,19 @@ public class ProductService {
             productPage = productRepository.findAll(pageRequest);
         }
 
-        return productPage.map(product -> new ProductDTO(
-                product.getId(),
-                product.getProductName(),
-                product.getImage(),
-                product.getSellerName(),
-                product.getLocation(),
-                product.getDeadlineDate(),
-                product.getApplicants(),
-                product.getMaxApplicants(),
-                product.getDescription(),
-                product.getActivityType(),
-                product.getCategory().getName()
-        ));
+        return productPage.map(product -> ProductDTO.builder()
+                .id(product.getId())
+                .productName(product.getProductName())
+                .image(product.getImage())
+                .sellerName(product.getSellerName())
+                .location(product.getLocation())
+                .deadlineDate(product.getDeadlineDate())
+                .applicants(product.getApplicants())
+                .maxApplicants(product.getMaxApplicants())
+                .description(product.getDescription())
+                .activityType(product.getActivityType())
+                .categoryName(product.getCategory().getName())
+                .build());
     }
 
 
@@ -157,19 +157,19 @@ public class ProductService {
         Optional<ProductEntity> productEntityOpt = productRepository.findById(id);
         if (productEntityOpt.isPresent()) {
             ProductEntity productEntity = productEntityOpt.get();
-            return new ProductDTO(
-                    productEntity.getId(),
-                    productEntity.getProductName(),
-                    productEntity.getImage(),
-                    productEntity.getSellerName(),
-                    productEntity.getLocation(),
-                    productEntity.getDeadlineDate(),
-                    productEntity.getApplicants(),
-                    productEntity.getMaxApplicants(),
-                    productEntity.getDescription(),
-                    productEntity.getActivityType(),
-                    productEntity.getCategory().getName()
-            );
+            return ProductDTO.builder()
+                    .id(productEntity.getId())
+                    .productName(productEntity.getProductName())
+                    .image(productEntity.getImage())
+                    .sellerName(productEntity.getSellerName())
+                    .location(productEntity.getLocation())
+                    .deadlineDate(productEntity.getDeadlineDate())
+                    .applicants(productEntity.getApplicants())
+                    .maxApplicants(productEntity.getMaxApplicants())
+                    .description(productEntity.getDescription())
+                    .activityType(productEntity.getActivityType())
+                    .categoryName(productEntity.getCategory().getName())
+                    .build();
         } else {
             throw new RuntimeException("Product not found with id: " + id); // 예외처리
         }
@@ -189,19 +189,19 @@ public class ProductService {
 
         // entities를 DTO로 변환
         return products.stream()
-                .map(product -> new ProductDTO(
-                        product.getId(),
-                        product.getProductName(),
-                        product.getImage(),
-                        product.getSellerName(),
-                        product.getLocation(),
-                        product.getDeadlineDate(),
-                        product.getApplicants(),
-                        product.getMaxApplicants(),
-                        product.getDescription(),
-                        product.getActivityType(),
-                        product.getCategory().getName()
-                ))
+                .map(product -> ProductDTO.builder()
+                        .id(product.getId())
+                        .productName(product.getProductName())
+                        .image(product.getImage())
+                        .sellerName(product.getSellerName())
+                        .location(product.getLocation())
+                        .deadlineDate(product.getDeadlineDate())
+                        .applicants(product.getApplicants())
+                        .maxApplicants(product.getMaxApplicants())
+                        .description(product.getDescription())
+                        .activityType(product.getActivityType())
+                        .categoryName(product.getCategory().getName())
+                        .build())
                 .collect(Collectors.toList());
     }
 

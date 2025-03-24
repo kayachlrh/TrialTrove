@@ -38,10 +38,4 @@ public class MemberDTO {
         this.userId = userId;
     }
 
-//    public MemberEntity toEntity() {
-//        MemberEntity memberEntity = new MemberEntity();  // 기본 생성자 사용
-//        memberEntity.setUserId(this.userId);  // MemberDTO의 userId를 MemberEntity로 설정
-//        // 필요에 따라 다른 필드들도 설정할 수 있습니다.
-//        return memberEntity;
-//    }
 }

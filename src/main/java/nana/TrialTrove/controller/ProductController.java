@@ -178,7 +178,13 @@ public class ProductController {
             @RequestParam("description") String description,
             @RequestParam("maxApplicants") int maxApplicants) {
         try {
-            ProductDTO productDTO = new ProductDTO(id, productName, description, maxApplicants);
+            ProductDTO productDTO = ProductDTO.builder()
+                    .id(id)
+                    .productName(productName)
+                    .description(description)
+                    .maxApplicants(maxApplicants)
+                    .build();  // 빌더 패턴으로 객체 생성
+
             productService.updateProduct(productDTO);
             return ResponseEntity.ok().body("{\"success\": true}");
         } catch (Exception e) {

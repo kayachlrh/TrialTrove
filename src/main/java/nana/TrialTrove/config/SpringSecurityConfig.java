@@ -41,6 +41,7 @@ public class SpringSecurityConfig {
     private final MemberDetailsService memberDetailsService;
     private final CustomOAuth2UserService customOAuth2UserService;
 
+
     // 스프링 시큐리티 기능 비활성화
     @Bean
     public WebSecurityCustomizer configure() {
