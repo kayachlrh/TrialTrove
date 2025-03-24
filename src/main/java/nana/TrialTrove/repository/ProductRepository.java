@@ -21,7 +21,7 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
     Page<ProductEntity> findAll(Pageable pageable);
 
     @Query("SELECT p FROM ProductEntity p WHERE " +
-            "(:keyword IS NULL OR p.productName LIKE %:keyword%) AND " +
+            "(:keyword IS NULL OR p.productName LIKE :keyword%) AND " +
             "(:category IS NULL OR p.category.name = :category) AND " +
             "(:location IS NULL OR p.location = :location)")
     List<ProductEntity> findByKeywordCategoryLocation(@Param("keyword") String keyword,
