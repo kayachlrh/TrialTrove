@@ -1,7 +1,9 @@
 package nana.TrialTrove.service;
 
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import nana.TrialTrove.domain.*;
 import nana.TrialTrove.repository.ApplicationRepository;
 import nana.TrialTrove.repository.CategoryRepository;
@@ -20,6 +22,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class ProductService {
 
     private static final Logger logger = LoggerFactory.getLogger(ProductService.class);
@@ -27,15 +30,7 @@ public class ProductService {
     private final CategoryRepository categoryRepository;
     private final MemberRepository memberRepository;
     private final ApplicationRepository applicationRepository;
-
-
-    @Autowired
-    public ProductService(ProductRepository productRepository, CategoryRepository categoryRepository, MemberRepository memberRepository, ApplicationRepository applicationRepository) {
-        this.productRepository = productRepository;
-        this.categoryRepository = categoryRepository;
-        this.memberRepository = memberRepository;
-        this.applicationRepository = applicationRepository;
-    }
+    private final JPAQueryFactory queryFactory;
 
 
     // 모든 상품 조회
@@ -177,17 +172,8 @@ public class ProductService {
 
     // 검색
     public List<ProductDTO> searchProducts(String keyword, String category, String location) {
-        // 모든 조건이 비어 있는 경우 빈 리스트 반환
-        if ((keyword == null || keyword.isEmpty()) &&
-                (category == null || category.isEmpty()) &&
-                (location == null || location.isEmpty())) {
-            return new ArrayList<>();
-        }
+        List<ProductEntity> products = productRepository.searchByConditions(keyword, category, location, queryFactory);
 
-        // 조건이 모두 비어 있지 않은 경우 검색
-        List<ProductEntity> products = productRepository.findByKeywordCategoryLocation(keyword, category, location);
-
-        // entities를 DTO로 변환
         return products.stream()
                 .map(product -> ProductDTO.builder()
                         .id(product.getId())
