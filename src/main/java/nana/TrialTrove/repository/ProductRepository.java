@@ -54,5 +54,8 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long>, Q
     @Query("SELECT p FROM ProductEntity p JOIN ApplicationEntity a ON p.id = a.product.id WHERE a.member.id = :memberId")
     List<ProductEntity> findByMemberId(@Param("memberId") Long memberId);
 
-
+    // Lock
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("Select p from ProductEntity p WHERE p.id = :id")
+    Optional<ProductEntity> findByIdWithLock(@Param("id") Long id);
 }

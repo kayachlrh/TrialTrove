@@ -1,5 +1,6 @@
 package nana.TrialTrove.service;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -267,14 +268,18 @@ public class ProductService {
     // 관심 체험 신청
     @Transactional
     public ApplicationEntity apply(ApplicationDTO applicationDTO) {
+
         // DTO를 엔티티로 변환
         ApplicationEntity applicationEntity = new ApplicationEntity();
         applicationEntity.setMember(memberRepository.findById(applicationDTO.getMemberId())
                 .orElseThrow(() -> new IllegalArgumentException("Member not found with id: " + applicationDTO.getMemberId())));
 
-        ProductEntity productEntity = productRepository.findById(applicationDTO.getProductId())
+        ProductEntity productEntity = productRepository.findByIdWithLock(applicationDTO.getProductId())
                 .orElseThrow(() -> new IllegalArgumentException("Product not found with id: " + applicationDTO.getProductId()));
 
+        if(productEntity.getApplicants() >= productEntity.getMaxApplicants()) {
+            throw new RuntimeException("정원 초과");
+        }
 
         applicationEntity.setProduct(productEntity);
         applicationEntity.setPhone(applicationDTO.getPhone());
