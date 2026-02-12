@@ -59,7 +59,7 @@ public class SpringSecurityConfig {
 
                     authorizeRequests.requestMatchers("/board/reply/**","/product/enroll","/product/update")
                             .hasRole("ADMIN");
-                    authorizeRequests.requestMatchers("/uploads/**","/product/trialDetail/**").permitAll();
+                    authorizeRequests.requestMatchers("/uploads/**","/product/trialDetail/**","/api/load-test/**").permitAll();
                     authorizeRequests.anyRequest().permitAll();
                 })
                 .formLogin((formLogin) -> {
@@ -72,7 +72,7 @@ public class SpringSecurityConfig {
                 .csrf(csrf -> csrf
                 //.csrfTokenRequestHandler()
                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-                .ignoringRequestMatchers("/ws/**", "/messages/**")
+                .ignoringRequestMatchers("/ws/**", "/messages/**", "/api/load-test/**")
         );
         http
                 .sessionManagement((sessionManagement) ->

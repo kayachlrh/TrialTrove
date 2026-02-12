@@ -278,7 +278,7 @@ public class ProductService {
                 .orElseThrow(() -> new IllegalArgumentException("Product not found with id: " + applicationDTO.getProductId()));
 
         if(productEntity.getApplicants() >= productEntity.getMaxApplicants()) {
-            throw new RuntimeException("정원 초과");
+            throw new CapacityExceededException();
         }
 
         applicationEntity.setProduct(productEntity);
