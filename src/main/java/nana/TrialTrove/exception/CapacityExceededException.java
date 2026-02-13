@@ -1,4 +1,4 @@
-package nana.TrialTrove.service;
+package nana.TrialTrove.exception;
 
 public class CapacityExceededException extends RuntimeException {
     public CapacityExceededException() {

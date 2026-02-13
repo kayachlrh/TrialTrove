@@ -2,7 +2,7 @@ package nana.TrialTrove.controller;
 
 import lombok.RequiredArgsConstructor;
 import nana.TrialTrove.domain.ApplicationDTO;
-import nana.TrialTrove.service.CapacityExceededException;
+import nana.TrialTrove.exception.CapacityExceededException;
 import nana.TrialTrove.service.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,18 +1,16 @@
 package nana.TrialTrove.service;
 
-import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import nana.TrialTrove.domain.*;
+import nana.TrialTrove.exception.CapacityExceededException;
 import nana.TrialTrove.repository.ApplicationRepository;
 import nana.TrialTrove.repository.CategoryRepository;
 import nana.TrialTrove.repository.MemberRepository;
 import nana.TrialTrove.repository.ProductRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
