@@ -17,7 +17,7 @@
 * Web Socket
 * STOMP
 * QueryDSL
-* Docker(Compose)
+* Docker
 
 <br/> <br/>
 
@@ -50,7 +50,7 @@
 
 ---
 
-### 배포 – Docker & Docker Compose
+### 배포 – Docker
 - 문제 상황:
   개인 프로젝트를 실제 서버 환경에 배포해보는 것이 목표였으며,
   배포 과정을 반복적으로 재현하고 관리할 방법이 필요했음
@@ -58,7 +58,7 @@
   Docker 기반 컨테이너 배포
 - 선택 이유:
   배포 과정을 코드로 관리해 재현 가능한 배포 환경을 구성하고,
-  Docker Compose로 서비스 실행을 일관되게 관리하기 위함
+  Docker로 서비스 실행을 일관되게 관리하기 위함
 
 ---
 
